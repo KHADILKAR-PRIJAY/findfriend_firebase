@@ -516,39 +516,37 @@ class _UserProfileState extends State<UserProfile> {
                               ],
                             ),
                           ),
-                          Expanded(
-                            child: FutureBuilder<GetPostModel>(
-                              future: getpostmodel,
-                              builder: (context, snapshot) {
-                                return GridView.builder(
-                                  physics: NeverScrollableScrollPhysics(),
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 3,
-                                  ),
-                                  itemCount: snapshot.data!.data.length,
-                                  shrinkWrap: true,
-                                  itemBuilder: (context, index) {
-                                    return Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: ClipRRect(
-                                        child: CachedNetworkImage(
-                                          imageUrl:
-                                              '${snapshot.data!.data[index].post}',
-                                          filterQuality: FilterQuality.medium,
-                                          fit: BoxFit.cover,
-                                          errorWidget: (context, url, error) =>
-                                              Icon(Icons.error),
-                                        ),
-                                        // child: Image.network(
-                                        //     '${snapshot.data!.data[index].post}',
-                                        //     fit: BoxFit.cover),
+                          FutureBuilder<GetPostModel>(
+                            future: getpostmodel,
+                            builder: (context, snapshot) {
+                              return GridView.builder(
+                                physics: NeverScrollableScrollPhysics(),
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3,
+                                ),
+                                itemCount: snapshot.data!.data.length,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: ClipRRect(
+                                      child: CachedNetworkImage(
+                                        imageUrl:
+                                            '${snapshot.data!.data[index].post}',
+                                        filterQuality: FilterQuality.medium,
+                                        fit: BoxFit.cover,
+                                        errorWidget: (context, url, error) =>
+                                            Icon(Icons.error),
                                       ),
-                                    );
-                                  },
-                                );
-                              },
-                            ),
+                                      // child: Image.network(
+                                      //     '${snapshot.data!.data[index].post}',
+                                      //     fit: BoxFit.cover),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
                           )
                         ],
                       ),
