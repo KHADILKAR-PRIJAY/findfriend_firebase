@@ -242,13 +242,22 @@ class _ChatRoomTileState extends State<ChatRoomTile> {
                   backgroundImage:
                       NetworkImage(searchSnapshot.docs[0].get('profile'))),
             ),
-            Positioned(
-                top: 0,
-                left: 34,
-                child: CircleAvatar(
-                  backgroundColor: Color(0xFF1FDEB3),
-                  radius: 4,
-                ))
+            (searchSnapshot.docs[0].get('status') == 'online')
+                ? Positioned(
+                    top: 0,
+                    left: 34,
+                    child: CircleAvatar(
+                      backgroundColor: Color(0xFF1FDEB3),
+                      radius: 4,
+                    ))
+                : Positioned(
+                    top: 0,
+                    left: 34,
+                    child: CircleAvatar(
+                      backgroundColor: Colors.red,
+                      radius: 4,
+                    ),
+                  )
           ],
         ),
         title: Text(searchSnapshot.docs[0].get('name')),

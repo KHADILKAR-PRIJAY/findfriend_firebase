@@ -1,3 +1,4 @@
+import 'package:find_friend/screens/Chat_pages/database.dart';
 import 'package:find_friend/screens/VIP_screen/vip_member.dart';
 import 'package:find_friend/screens/abouts_us.dart';
 import 'package:find_friend/screens/coins_screen/add_coins.dart';
@@ -31,7 +32,17 @@ void main() async {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -49,8 +60,8 @@ class MyApp extends StatelessWidget {
       ),
 
       debugShowCheckedModeBanner: false,
-      //home: Demop(),
-      initialRoute: SplashScreen.id,
+      home: Demop(),
+      //initialRoute: SplashScreen.id,
       routes: {
         SignUp.id: (context) => SignUp(),
         GenerateOtp.id: (context) => GenerateOtp(),

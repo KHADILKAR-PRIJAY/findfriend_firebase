@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:find_friend/models/coins_page_model.dart';
 import 'package:find_friend/models/homes.dart';
+import 'package:find_friend/screens/demo_screen/constant_chat.dart';
 import 'package:find_friend/screens/navigation_drawer.dart';
 import 'package:find_friend/screens/others_profile_page.dart';
 import 'package:find_friend/screens/search_page.dart';
@@ -11,6 +12,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 
+import 'Chat_pages/database.dart';
 import 'coins_screen/coins.dart';
 
 const String urll =
@@ -25,7 +27,8 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
+  DatabaseMethods databaseMethods = DatabaseMethods();
   final String assetName = 'assets/images/logo_transparent.svg';
   late Future<Homes> home;
   late Future<Homes> vip;
@@ -81,6 +84,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    WidgetsBinding.instance!.addObserver(this);
+    setStatus('online');
     Check_internet();
     check = true;
     //Home services-----------------------------------
@@ -109,6 +114,20 @@ class _HomePageState extends State<HomePage> {
     });
 
     super.initState();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.resumed) {
+      setStatus('online');
+    } else {
+      setStatus('offline');
+    }
+  }
+
+  void setStatus(String status) {
+    databaseMethods.updateUserInfo(ConstantChat.myId, status, 'status');
   }
 
   @override
