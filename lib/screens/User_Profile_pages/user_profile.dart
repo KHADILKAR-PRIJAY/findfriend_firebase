@@ -457,18 +457,32 @@ class _UserProfileState extends State<UserProfile> {
                             children: [
                               CircleAvatar(
                                 radius: 30,
-                                //backgroundImage: AssetImage('assets/images/instabg.jpg'),
                                 backgroundColor: Color(0xff6A6A6C),
                                 child: CircleAvatar(
-                                  radius: 28,
                                   backgroundColor: Colors.black,
+                                  radius: 28,
                                   child: CircleAvatar(
-                                      backgroundColor: Colors.transparent,
-                                      // backgroundImage:
-                                      //     AssetImage('assets/images/instabg.jpg'),
+                                      backgroundColor: Colors.black,
                                       radius: 27,
-                                      child: Icon(
-                                          FontAwesomeIcons.instagramSquare)),
+                                      child: Container(
+                                        height: 70,
+                                        width: 70,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(30),
+                                          gradient: LinearGradient(
+                                              colors: [
+                                                Color(0xff8a3ab9),
+                                                Color(0xffcd486b),
+                                                Color(0xffe95950),
+                                                Color(0xfffbad50),
+                                              ],
+                                              begin: Alignment.topRight,
+                                              end: Alignment.bottomLeft),
+                                        ),
+                                        child: Icon(FontAwesomeIcons.instagram,
+                                            color: Colors.white, size: 30),
+                                      )),
                                 ),
                               ),
                               CircleAvatar(
@@ -478,8 +492,10 @@ class _UserProfileState extends State<UserProfile> {
                                   radius: 28,
                                   backgroundColor: Colors.black,
                                   child: CircleAvatar(
+                                      backgroundColor: Color(0xff1DA1F2),
                                       radius: 27,
-                                      child: Icon(FontAwesomeIcons.twitter)),
+                                      child: Icon(FontAwesomeIcons.twitter,
+                                          color: Colors.white)),
                                 ),
                               ),
                               CircleAvatar(
@@ -491,7 +507,8 @@ class _UserProfileState extends State<UserProfile> {
                                   child: CircleAvatar(
                                       backgroundColor: Colors.red,
                                       radius: 27,
-                                      child: Icon(FontAwesomeIcons.youtube)),
+                                      child: Icon(FontAwesomeIcons.youtube,
+                                          color: Colors.white)),
                                 ),
                               ),
                               CircleAvatar(

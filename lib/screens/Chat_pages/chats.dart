@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:find_friend/screens/Chat_pages/conversation_screen.dart';
 import 'package:find_friend/screens/demo_screen/constant_chat.dart';
 import 'package:find_friend/screens/search_page.dart';
+import 'package:find_friend/timeStamp.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -203,6 +204,7 @@ class ChatRoomTile extends StatefulWidget {
 
 class _ChatRoomTileState extends State<ChatRoomTile> {
   late QuerySnapshot searchSnapshot;
+  var time = TimestampFormat();
 
   DatabaseMethods databasemethods = DatabaseMethods();
   @override
@@ -261,7 +263,14 @@ class _ChatRoomTileState extends State<ChatRoomTile> {
           ],
         ),
         title: Text(searchSnapshot.docs[0].get('name')),
-        subtitle: Text('Active 15m ago', style: TextStyle(color: Colors.grey)),
+        subtitle: (searchSnapshot.docs[0].get('status').toString() == 'offline')
+            ? Text(
+                time.parseTime(DateTime.parse(
+                        searchSnapshot.docs[0].get('timeStamp'))) ??
+                    "",
+                style: TextStyle(color: Colors.grey, fontSize: 12),
+              )
+            : Text('active now'),
       ),
     );
   }

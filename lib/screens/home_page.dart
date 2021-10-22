@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:find_friend/models/coins_page_model.dart';
 import 'package:find_friend/models/homes.dart';
 import 'package:find_friend/screens/demo_screen/constant_chat.dart';
@@ -84,10 +85,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   @override
   void initState() {
+    //User presence-----------------------------------
     WidgetsBinding.instance!.addObserver(this);
     setStatus('online');
+
+    //-------------------------------------------------
     Check_internet();
     check = true;
+
     //Home services-----------------------------------
     print('home page id:' + widget.userid);
     home = HomeServices.getHome(widget.userid).then((value) {
@@ -105,6 +110,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       });
       return value;
     });
+
     //Coin services
     coinspagemodel = CoinPageServices.getCoinPage(widget.userid).then((value) {
       username = value.data[0].username;
@@ -123,6 +129,17 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       setStatus('online');
     } else {
       setStatus('offline');
+      DateTime currentPhoneDate = DateTime.now(); //DateTime
+
+      Timestamp myTimeStamp =
+          Timestamp.fromDate(currentPhoneDate); //To TimeStamp
+
+      DateTime myDateTime = myTimeStamp.toDate(); // TimeStamp to DateTime
+
+      print("current phone data is: $currentPhoneDate");
+      print("current phone data is: $myDateTime");
+      databaseMethods.updateUserInfo(
+          ConstantChat.myId, myDateTime.toString(), 'timeStamp');
     }
   }
 
