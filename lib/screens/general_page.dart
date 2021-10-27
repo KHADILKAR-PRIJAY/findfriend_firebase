@@ -33,7 +33,7 @@ class _GeneralPageState extends State<GeneralPage> {
   List<Widget> _pages() => <Widget>[
         HomePage(widget.userid),
         NotificationPage(widget.userid),
-        CallHistory(),
+        CallHistory(widget.userid),
         Chats(),
         UserProfile(widget.userid)
       ];

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:find_friend/firebase_notification_handler/notification_handler.dart';
 import 'package:find_friend/firebase_notification_handler/send_notofication.dart';
 import 'package:find_friend/models/getpost_model.dart';
 import 'package:find_friend/models/others_profile.dart';
@@ -417,7 +418,10 @@ class _OthersProfilePageState extends State<OthersProfilePage> {
                                                           cn,
                                                           widget
                                                               .otherUser_FCMtoken,
-                                                          '0');
+                                                          '0',
+                                                          widget.userid,
+                                                          '${snapshot.data!.data[0].userId}',
+                                                          '');
                                                       Navigator.push(
                                                           context,
                                                           MaterialPageRoute(
@@ -426,7 +430,18 @@ class _OthersProfilePageState extends State<OthersProfilePage> {
                                                                     //user_id: widget.user_id,
                                                                     channelName:
                                                                         cn,
-                                                                  )));
+                                                                    caller_id:
+                                                                        '${snapshot.data!.data[0].userId}',
+                                                                    CallerImage:
+                                                                        '${snapshot.data!.data[0].profilePicture}',
+                                                                    callStatus:
+                                                                        'o',
+                                                                    user_id: widget
+                                                                        .userid,
+                                                                  ))).then(
+                                                          (value) {
+                                                        Rejcted = false;
+                                                      });
                                                     },
                                                   );
                                                 },
@@ -458,7 +473,10 @@ class _OthersProfilePageState extends State<OthersProfilePage> {
                                                           cn,
                                                           widget
                                                               .otherUser_FCMtoken,
-                                                          '1');
+                                                          '1',
+                                                          widget.userid,
+                                                          '${snapshot.data!.data[0].userId}',
+                                                          '');
                                                       Navigator.push(
                                                           context,
                                                           MaterialPageRoute(
@@ -468,7 +486,18 @@ class _OthersProfilePageState extends State<OthersProfilePage> {
                                                                         //user_id: widget.user_id,
                                                                         channelName:
                                                                             cn,
-                                                                      )));
+                                                                        user_id:
+                                                                            widget.userid,
+                                                                        callStatus:
+                                                                            'o',
+                                                                        CallerImage:
+                                                                            '${snapshot.data!.data[0].profilePicture}',
+                                                                        caller_id:
+                                                                            '${snapshot.data!.data[0].userId}',
+                                                                      ))).then(
+                                                          (value) {
+                                                        Rejcted = false;
+                                                      });
                                                     },
                                                   );
                                                 },
@@ -625,29 +654,28 @@ class _OthersProfilePageState extends State<OthersProfilePage> {
                           ],
                         ),
                       ),
-                      Expanded(
-                          child: FutureBuilder<GetPostModel>(
-                              future: getpostmodel,
-                              builder: (BuildContext context, snapshot) {
-                                return GridView.builder(
-                                    physics: NeverScrollableScrollPhysics(),
-                                    gridDelegate:
-                                        SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 3,
+                      FutureBuilder<GetPostModel>(
+                          future: getpostmodel,
+                          builder: (BuildContext context, snapshot) {
+                            return GridView.builder(
+                                physics: NeverScrollableScrollPhysics(),
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3,
+                                ),
+                                itemCount: snapshot.data!.data.length,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: ClipRRect(
+                                      child: Image.network(
+                                          '${snapshot.data!.data[index].post}',
+                                          fit: BoxFit.cover),
                                     ),
-                                    itemCount: snapshot.data!.data.length,
-                                    shrinkWrap: true,
-                                    itemBuilder: (context, index) {
-                                      return Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: ClipRRect(
-                                          child: Image.network(
-                                              '${snapshot.data!.data[index].post}',
-                                              fit: BoxFit.cover),
-                                        ),
-                                      );
-                                    });
-                              }))
+                                  );
+                                });
+                          })
                     ],
                   ),
                 ),

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:find_friend/firebase_notification_handler/notification_handler.dart';
 import 'package:find_friend/firebase_notification_handler/send_notofication.dart';
 import 'package:find_friend/screens/Chat_pages/database.dart';
 import 'package:find_friend/screens/calling_pages/video_call.dart';
@@ -128,14 +129,21 @@ class _Conversation_PageState extends State<Conversation_Page> {
                       () {
                         cn = value;
                         print(cn.toString() + '////////////');
-                        sendnotification(cn, FCMtoken, '1');
+                        sendnotification(cn, FCMtoken, '1', ConstantChat.myId,
+                            widget.otherUserId, '');
                         Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => VoiceCallPg(
                                       //user_id: widget.user_id,
                                       channelName: cn,
-                                    )));
+                                      CallerImage: widget.profileimage,
+                                      user_id: '45',
+                                      callStatus: 'o',
+                                      caller_id: widget.otherUserId,
+                                    ))).then((value) {
+                          Rejcted = false;
+                        });
                       },
                     );
                   },
@@ -152,14 +160,21 @@ class _Conversation_PageState extends State<Conversation_Page> {
                       () {
                         cn = value;
                         print(cn.toString() + '////////////');
-                        sendnotification(cn, FCMtoken, '0');
+                        sendnotification(cn, FCMtoken, '0', ConstantChat.myId,
+                            widget.otherUserId, '');
                         Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: (context) => VideoCallPage(
                                       //user_id: widget.user_id,
                                       channelName: cn,
-                                    )));
+                                      CallerImage: widget.profileimage,
+                                      user_id: '45',
+                                      callStatus: 'o',
+                                      caller_id: widget.otherUserId,
+                                    ))).then((value) {
+                          Rejcted = false;
+                        });
                       },
                     );
                   },
