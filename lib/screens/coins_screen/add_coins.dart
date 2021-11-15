@@ -4,8 +4,12 @@ import 'package:find_friend/models/coins_plan.dart';
 import 'package:find_friend/services/fetch_coins.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:paytm_allinonesdk/paytm_allinonesdk.dart';
 
+const String urll =
+    'http://findfriend.notionprojects.tech/api/iniInitiate_transaction.php';
 const String url = 'http://findfriend.notionprojects.tech/api/add_coins.php';
 
 class AddCoins extends StatefulWidget {
@@ -19,6 +23,13 @@ class AddCoins extends StatefulWidget {
 
 class _AddCoinsState extends State<AddCoins> {
   late Future<CoinsPlan> coinsplan;
+  String mid = "", orderId = "", amount = "", txnToken = "";
+  String result = "";
+  bool isStaging = true;
+  bool isApiCallInprogress = false;
+  String callbackUrl = "";
+  bool restrictAppInvoke = true;
+  bool enableAssist = true;
 
   Future addCoins(
       String userid, String credAmount, BuildContext context) async {
@@ -40,9 +51,76 @@ class _AddCoinsState extends State<AddCoins> {
     }
   }
 
+  Future<void> getTxnToken(String amount) async {
+    var Response = await http.post(Uri.parse(urll), body: {
+      'token': '123456789',
+      'amount': amount,
+    });
+    var response = jsonDecode(Response.body);
+    if (Response.statusCode == 200) {
+      print('Get transaction token : ' + Response.body);
+      orderId = response['data']['orderId'];
+      mid = response['data']['mid'];
+      txnToken = response['data']['response']['body']['txnToken'];
+    } else {
+      print('error');
+    }
+  }
+
+  Future<void> _startTransaction() async {
+    if (txnToken.isEmpty) {
+      return print('txn token is empty!');
+    }
+
+    var sendMap = <String, dynamic>{
+      "mid": mid,
+      "orderId": orderId,
+      "amount": amount,
+      "txnToken": txnToken,
+      "callbackUrl":
+          'https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=${orderId}',
+      "isStaging": isStaging,
+      "restrictAppInvoke": restrictAppInvoke,
+      "enableAssist": enableAssist
+    };
+    print(sendMap);
+    try {
+      var response = AllInOneSdk.startTransaction(
+          mid,
+          orderId,
+          amount,
+          txnToken,
+          "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=${orderId}",
+          isStaging,
+          restrictAppInvoke,
+          enableAssist);
+      response.then((value) {
+        print(value);
+        setState(() {
+          result = value.toString();
+        });
+      }).catchError((onError) {
+        if (onError is PlatformException) {
+          setState(() {
+            result = onError.message.toString() +
+                " \n  " +
+                onError.details.toString();
+          });
+        } else {
+          setState(() {
+            result = onError.toString();
+          });
+        }
+      });
+    } catch (err) {
+      result = err.toString();
+    }
+  }
+
   @override
   void initState() {
     coinsplan = CoinServices.getCoins(widget.userid);
+    getTxnToken('70');
     super.initState();
   }
 

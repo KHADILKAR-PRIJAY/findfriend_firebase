@@ -499,6 +499,13 @@
             </list>
           </value>
         </entry>
+        <entry key="paytm_allinonesdk">
+          <value>
+            <list>
+              <option value="$USER_HOME$/Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/paytm_allinonesdk-1.1.4/lib" />
+            </list>
+          </value>
+        </entry>
         <entry key="pedantic">
           <value>
             <list>
@@ -808,6 +815,7 @@
       <root url="file://$USER_HOME$/Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider_platform_interface-2.0.1/lib" />
       <root url="file://$USER_HOME$/Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/path_provider_windows-2.0.3/lib" />
       <root url="file://$USER_HOME$/Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/paytm-3.0.0/lib" />
+      <root url="file://$USER_HOME$/Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/paytm_allinonesdk-1.1.4/lib" />
       <root url="file://$USER_HOME$/Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/pedantic-1.11.1/lib" />
       <root url="file://$USER_HOME$/Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/permission_handler-8.1.6/lib" />
       <root url="file://$USER_HOME$/Flutter/flutter/.pub-cache/hosted/pub.dartlang.org/permission_handler_platform_interface-3.6.1/lib" />
