@@ -11,6 +11,8 @@ import 'package:paytm_allinonesdk/paytm_allinonesdk.dart';
 const String urll =
     'http://findfriend.notionprojects.tech/api/iniInitiate_transaction.php';
 const String url = 'http://findfriend.notionprojects.tech/api/add_coins.php';
+const String url2 =
+    'http://findfriend.notionprojects.tech/api/transaction_status.php';
 
 class AddCoins extends StatefulWidget {
   static String id = 'add_coins';
@@ -30,6 +32,7 @@ class _AddCoinsState extends State<AddCoins> {
   String callbackUrl = "";
   bool restrictAppInvoke = true;
   bool enableAssist = true;
+  late String paymentStatusCode;
 
   Future addCoins(
       String userid, String credAmount, BuildContext context) async {
@@ -47,7 +50,7 @@ class _AddCoinsState extends State<AddCoins> {
           content: Text('${credAmount} ${response['message']} ',
               textAlign: TextAlign.center)));
     } else {
-      print('no-----------');
+      print('Coins cannot be added');
     }
   }
 
@@ -62,65 +65,82 @@ class _AddCoinsState extends State<AddCoins> {
       orderId = response['data']['orderId'];
       mid = response['data']['mid'];
       txnToken = response['data']['response']['body']['txnToken'];
+      _startTransaction(amount).then((value) {
+        checkPaymentStatus(orderId);
+      });
     } else {
       print('error');
     }
   }
 
-  Future<void> _startTransaction() async {
+  Future<void> checkPaymentStatus(String orderId) async {
+    var Response = await http.post(Uri.parse(url2), body: {
+      'token': '123456789',
+      'order_id': orderId,
+    });
+    var response = jsonDecode(Response.body);
+    if (Response.statusCode == 200) {
+      print(' checkPaymentStatus: ' + Response.body);
+      paymentStatusCode =
+          response['data']['response']['body']['resultInfo']['resultCode'];
+    } else {
+      print('error');
+    }
+  }
+
+  Future<void> _startTransaction(String amount) async {
     if (txnToken.isEmpty) {
       return print('txn token is empty!');
-    }
-
-    var sendMap = <String, dynamic>{
-      "mid": mid,
-      "orderId": orderId,
-      "amount": amount,
-      "txnToken": txnToken,
-      "callbackUrl":
-          'https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=${orderId}',
-      "isStaging": isStaging,
-      "restrictAppInvoke": restrictAppInvoke,
-      "enableAssist": enableAssist
-    };
-    print(sendMap);
-    try {
-      var response = AllInOneSdk.startTransaction(
-          mid,
-          orderId,
-          amount,
-          txnToken,
-          "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=${orderId}",
-          isStaging,
-          restrictAppInvoke,
-          enableAssist);
-      response.then((value) {
-        print(value);
-        setState(() {
-          result = value.toString();
+    } else {
+      var sendMap = <String, dynamic>{
+        "mid": mid,
+        "orderId": orderId,
+        "amount": amount,
+        "txnToken": txnToken,
+        "callbackUrl":
+            'https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=${orderId}',
+        "isStaging": isStaging,
+        "restrictAppInvoke": restrictAppInvoke,
+        "enableAssist": enableAssist
+      };
+      print('Data map for paytm: ' + sendMap.toString());
+      try {
+        var response = AllInOneSdk.startTransaction(
+            mid,
+            orderId,
+            amount,
+            txnToken,
+            "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=${orderId}",
+            isStaging,
+            restrictAppInvoke,
+            enableAssist);
+        response.then((value) {
+          print(value);
+          setState(() {
+            result = value.toString();
+          });
+        }).catchError((onError) {
+          if (onError is PlatformException) {
+            setState(() {
+              result = onError.message.toString() +
+                  " \n  " +
+                  onError.details.toString();
+            });
+          } else {
+            setState(() {
+              result = onError.toString();
+            });
+          }
         });
-      }).catchError((onError) {
-        if (onError is PlatformException) {
-          setState(() {
-            result = onError.message.toString() +
-                " \n  " +
-                onError.details.toString();
-          });
-        } else {
-          setState(() {
-            result = onError.toString();
-          });
-        }
-      });
-    } catch (err) {
-      result = err.toString();
+      } catch (err) {
+        result = err.toString();
+      }
     }
   }
 
   @override
   void initState() {
     coinsplan = CoinServices.getCoins(widget.userid);
-    getTxnToken('70');
     super.initState();
   }
 
@@ -190,15 +210,22 @@ class _AddCoinsState extends State<AddCoins> {
                                   return GestureDetector(
                                     onTap: () {
                                       setState(() {
-                                        addCoins(
-                                                widget.userid,
-                                                '${snapshot.data!.data[index].totalCoin}',
-                                                context)
+                                        getTxnToken(
+                                                '${snapshot.data!.data[index].amount}')
                                             .then((value) {
-                                          setState(() {
-                                            coinsplan = CoinServices.getCoins(
-                                                widget.userid);
-                                          });
+                                          if (paymentStatusCode == '01') {
+                                            addCoins(
+                                                    widget.userid,
+                                                    '${snapshot.data!.data[index].totalCoin}',
+                                                    context)
+                                                .then((value) {
+                                              setState(() {
+                                                coinsplan =
+                                                    CoinServices.getCoins(
+                                                        widget.userid);
+                                              });
+                                            });
+                                          }
                                         });
                                       });
                                     },

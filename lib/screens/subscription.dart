@@ -4,10 +4,16 @@ import 'package:find_friend/models/subscription_model.dart';
 import 'package:find_friend/services/fetch_subscription.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
+import 'package:paytm_allinonesdk/paytm_allinonesdk.dart';
 
 const String url =
     'http://findfriend.notionprojects.tech/api/add_subscription_plan.php';
+const String url2 =
+    'http://findfriend.notionprojects.tech/api/transaction_status.php';
+const String urll =
+    'http://findfriend.notionprojects.tech/api/iniInitiate_transaction.php';
 
 class Subscription extends StatefulWidget {
   static String id = 'subscription';
@@ -24,6 +30,14 @@ class _SubscriptionState extends State<Subscription> {
   late bool planOne = false;
   late bool planTwo = true;
   late bool planThird = false;
+  String mid = "", orderId = "", amount = "", txnToken = "";
+  String result = "";
+  bool isStaging = true;
+  bool isApiCallInprogress = false;
+  String callbackUrl = "";
+  bool restrictAppInvoke = true;
+  bool enableAssist = true;
+  late String paymentStatusCode;
 
   Future addSubscriptionPlan(
       String userid, String planid, BuildContext context) async {
@@ -48,6 +62,88 @@ class _SubscriptionState extends State<Subscription> {
           backgroundColor: Colors.red,
           content: Text('Plan Activated', textAlign: TextAlign.center));
       ScaffoldMessenger.of(context).showSnackBar(snackbar);
+    }
+  }
+
+  Future<void> getTxnToken(String amount) async {
+    var Response = await http.post(Uri.parse(urll), body: {
+      'token': '123456789',
+      'amount': amount,
+    });
+    var response = jsonDecode(Response.body);
+    if (Response.statusCode == 200) {
+      print('Get transaction token : ' + Response.body);
+      orderId = response['data']['orderId'];
+      mid = response['data']['mid'];
+      txnToken = response['data']['response']['body']['txnToken'];
+      _startTransaction(amount);
+    } else {
+      print('error');
+    }
+  }
+
+  Future<void> checkPaymentStatus(String orderId) async {
+    var Response = await http.post(Uri.parse(url2), body: {
+      'token': '123456789',
+      'order_id': orderId,
+    });
+    var response = jsonDecode(Response.body);
+    if (Response.statusCode == 200) {
+      print(' checkPaymentStatus: ' + Response.body);
+      paymentStatusCode =
+          response['data']['response']['body']['resultInfo']['resultCode'];
+    } else {
+      print('error');
+    }
+  }
+
+  Future<void> _startTransaction(String amount) async {
+    if (txnToken.isEmpty) {
+      return print('txn token is empty!');
+    } else {
+      var sendMap = <String, dynamic>{
+        "mid": mid,
+        "orderId": orderId,
+        "amount": amount,
+        "txnToken": txnToken,
+        "callbackUrl":
+            'https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=${orderId}',
+        "isStaging": isStaging,
+        "restrictAppInvoke": restrictAppInvoke,
+        "enableAssist": enableAssist
+      };
+      print('Data map for paytm: ' + sendMap.toString());
+      try {
+        var response = AllInOneSdk.startTransaction(
+            mid,
+            orderId,
+            amount,
+            txnToken,
+            "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=${orderId}",
+            isStaging,
+            restrictAppInvoke,
+            enableAssist);
+        response.then((value) {
+          print(value);
+          setState(() {
+            result = value.toString();
+          });
+        }).catchError((onError) {
+          if (onError is PlatformException) {
+            setState(() {
+              result = onError.message.toString() +
+                  " \n  " +
+                  onError.details.toString();
+            });
+          } else {
+            setState(() {
+              result = onError.toString();
+            });
+          }
+        });
+      } catch (err) {
+        result = err.toString();
+      }
     }
   }
 
@@ -197,17 +293,25 @@ class _SubscriptionState extends State<Subscription> {
                                         planOne = true;
                                         planTwo = false;
                                         planThird = false;
-                                        addSubscriptionPlan(
-                                                widget.userid,
-                                                '${snapshot.data!.data[0].planId}',
-                                                context)
+                                        getTxnToken(
+                                                '${snapshot.data!.data[0].amount}')
                                             .then((value) {
-                                          setState(() {
-                                            currentSubs =
-                                                SubscriptionPlanServices
-                                                    .getCurrentUserPlan(
-                                                        widget.userid);
-                                          });
+                                          checkPaymentStatus(orderId);
+                                        }).then((value) {
+                                          if (paymentStatusCode == '01') {
+                                            addSubscriptionPlan(
+                                                    widget.userid,
+                                                    '${snapshot.data!.data[0].planId}',
+                                                    context)
+                                                .then((value) {
+                                              setState(() {
+                                                currentSubs =
+                                                    SubscriptionPlanServices
+                                                        .getCurrentUserPlan(
+                                                            widget.userid);
+                                              });
+                                            });
+                                          }
                                         });
                                       });
                                     },

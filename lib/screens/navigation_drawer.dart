@@ -85,28 +85,28 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                           TextStyle(color: Color(0xffF0EEEF).withOpacity(0.6)),
                     ),
                     SizedBox(height: 2),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Transform.scale(
-                          scale: 0.7,
-                          child: CupertinoSwitch(
-                            trackColor: Colors.red,
-                            value: toggle,
-                            onChanged: (bool value) {},
-                            // onChanged: (value) {
-                            //   setState(() {
-                            //     toggle = value;
-                            //   });
-                            // },
-                          ),
-                        ),
-                        Text(
-                          'Online',
-                          style: TextStyle(color: Color(0xFFF0EEEF)),
-                        )
-                      ],
-                    )
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: [
+                    //     Transform.scale(
+                    //       scale: 0.7,
+                    //       child: CupertinoSwitch(
+                    //         trackColor: Colors.red,
+                    //         value: toggle,
+                    //         onChanged: (bool value) {},
+                    //         // onChanged: (value) {
+                    //         //   setState(() {
+                    //         //     toggle = value;
+                    //         //   });
+                    //         // },
+                    //       ),
+                    //     ),
+                    //     Text(
+                    //       'Online',
+                    //       style: TextStyle(color: Color(0xFFF0EEEF)),
+                    //     )
+                    //   ],
+                    // )
                   ],
                 ),
               ),
