@@ -65,9 +65,7 @@ class _AddCoinsState extends State<AddCoins> {
       orderId = response['data']['orderId'];
       mid = response['data']['mid'];
       txnToken = response['data']['response']['body']['txnToken'];
-      _startTransaction(amount).then((value) {
-        checkPaymentStatus(orderId);
-      });
+      _startTransaction(amount);
     } else {
       print('error');
     }
@@ -81,8 +79,10 @@ class _AddCoinsState extends State<AddCoins> {
     var response = jsonDecode(Response.body);
     if (Response.statusCode == 200) {
       print(' checkPaymentStatus: ' + Response.body);
-      paymentStatusCode =
-          response['data']['response']['body']['resultInfo']['resultCode'];
+      setState(() {
+        paymentStatusCode =
+            response['data']['response']['body']['resultInfo']['resultCode'];
+      });
     } else {
       print('error');
     }
@@ -115,6 +115,9 @@ class _AddCoinsState extends State<AddCoins> {
             restrictAppInvoke,
             enableAssist);
         response.then((value) {
+          print('sssssssssssssssssssssssssssssssssssssss');
+          checkPaymentStatus(orderId);
+          print('sssssssssssssssssssssssssssssssssssssss');
           print(value);
           setState(() {
             result = value.toString();
@@ -225,6 +228,9 @@ class _AddCoinsState extends State<AddCoins> {
                                                         widget.userid);
                                               });
                                             });
+                                          } else {
+                                            print(
+                                                'hhhhhhhhhhhhhhhuhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh!');
                                           }
                                         });
                                       });

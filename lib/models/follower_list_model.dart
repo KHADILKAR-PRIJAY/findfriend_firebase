@@ -19,13 +19,14 @@ class FollowerListModel {
 
   bool status;
   String message;
-  List<Datum> data;
+  List<FollowerListModelDatum> data;
 
   factory FollowerListModel.fromJson(Map<String, dynamic> json) =>
       FollowerListModel(
         status: json["status"],
         message: json["message"],
-        data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
+        data: List<FollowerListModelDatum>.from(
+            json["data"].map((x) => FollowerListModelDatum.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -35,8 +36,8 @@ class FollowerListModel {
       };
 }
 
-class Datum {
-  Datum({
+class FollowerListModelDatum {
+  FollowerListModelDatum({
     required this.id,
     required this.fullName,
     required this.username,
@@ -48,7 +49,8 @@ class Datum {
   String username;
   String profilePicture;
 
-  factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+  factory FollowerListModelDatum.fromJson(Map<String, dynamic> json) =>
+      FollowerListModelDatum(
         id: json["id"],
         fullName: json["full_name"],
         username: json["username"],

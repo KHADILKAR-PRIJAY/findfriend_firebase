@@ -90,8 +90,10 @@ class _SubscriptionState extends State<Subscription> {
     var response = jsonDecode(Response.body);
     if (Response.statusCode == 200) {
       print(' checkPaymentStatus: ' + Response.body);
-      paymentStatusCode =
-          response['data']['response']['body']['resultInfo']['resultCode'];
+      setState(() {
+        paymentStatusCode =
+            response['data']['response']['body']['resultInfo']['resultCode'];
+      });
     } else {
       print('error');
     }
@@ -124,6 +126,7 @@ class _SubscriptionState extends State<Subscription> {
             restrictAppInvoke,
             enableAssist);
         response.then((value) {
+          checkPaymentStatus(orderId);
           print(value);
           setState(() {
             result = value.toString();
@@ -290,29 +293,29 @@ class _SubscriptionState extends State<Subscription> {
                                   GestureDetector(
                                     onTap: () {
                                       setState(() {
-                                        planOne = true;
-                                        planTwo = false;
-                                        planThird = false;
                                         getTxnToken(
                                                 '${snapshot.data!.data[0].amount}')
                                             .then((value) {
-                                          checkPaymentStatus(orderId);
-                                        }).then((value) {
-                                          if (paymentStatusCode == '01') {
-                                            addSubscriptionPlan(
-                                                    widget.userid,
-                                                    '${snapshot.data!.data[0].planId}',
-                                                    context)
-                                                .then((value) {
-                                              setState(() {
-                                                currentSubs =
-                                                    SubscriptionPlanServices
-                                                        .getCurrentUserPlan(
-                                                            widget.userid);
-                                              });
+                                          //if (paymentStatusCode == '01') {
+                                          print(
+                                              'PAYTM SUCCESSSSSSSDDDUUUUUUUULLLLLLLL-LLLLLL------------------------------------------------------------');
+                                          addSubscriptionPlan(
+                                                  widget.userid,
+                                                  '${snapshot.data!.data[0].planId}',
+                                                  context)
+                                              .then((value) {
+                                            setState(() {
+                                              currentSubs =
+                                                  SubscriptionPlanServices
+                                                      .getCurrentUserPlan(
+                                                          widget.userid);
                                             });
-                                          }
+                                          });
+                                          //}
                                         });
+                                        planOne = true;
+                                        planTwo = false;
+                                        planThird = false;
                                       });
                                     },
                                     child: Container(
