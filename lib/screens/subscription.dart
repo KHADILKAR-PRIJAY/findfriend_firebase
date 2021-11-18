@@ -65,7 +65,7 @@ class _SubscriptionState extends State<Subscription> {
     }
   }
 
-  Future<void> getTxnToken(String amount) async {
+  Future<void> getTxnToken(String amount, String planId) async {
     var Response = await http.post(Uri.parse(urll), body: {
       'token': '123456789',
       'amount': amount,
@@ -76,7 +76,18 @@ class _SubscriptionState extends State<Subscription> {
       orderId = response['data']['orderId'];
       mid = response['data']['mid'];
       txnToken = response['data']['response']['body']['txnToken'];
-      _startTransaction(amount);
+      _startTransaction(amount).then((value) {
+        checkPaymentStatus(orderId).then((value) {
+          if (paymentStatusCode == '01') {
+            addSubscriptionPlan(widget.userid, planId, context).then((value) {
+              setState(() {
+                currentSubs =
+                    SubscriptionPlanServices.getCurrentUserPlan(widget.userid);
+              });
+            });
+          }
+        });
+      });
     } else {
       print('error');
     }
@@ -100,54 +111,55 @@ class _SubscriptionState extends State<Subscription> {
   }
 
   Future<void> _startTransaction(String amount) async {
-    if (txnToken.isEmpty) {
-      return print('txn token is empty!');
-    } else {
-      var sendMap = <String, dynamic>{
-        "mid": mid,
-        "orderId": orderId,
-        "amount": amount,
-        "txnToken": txnToken,
-        "callbackUrl":
-            'https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=${orderId}',
-        "isStaging": isStaging,
-        "restrictAppInvoke": restrictAppInvoke,
-        "enableAssist": enableAssist
-      };
-      print('Data map for paytm: ' + sendMap.toString());
-      try {
-        var response = AllInOneSdk.startTransaction(
-            mid,
-            orderId,
-            amount,
-            txnToken,
-            "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=${orderId}",
-            isStaging,
-            restrictAppInvoke,
-            enableAssist);
-        response.then((value) {
-          checkPaymentStatus(orderId);
-          print(value);
-          setState(() {
-            result = value.toString();
-          });
-        }).catchError((onError) {
-          if (onError is PlatformException) {
-            setState(() {
-              result = onError.message.toString() +
-                  " \n  " +
-                  onError.details.toString();
-            });
-          } else {
-            setState(() {
-              result = onError.toString();
-            });
-          }
-        });
-      } catch (err) {
-        result = err.toString();
-      }
-    }
+    // if (txnToken.isEmpty) {
+    //   return print('txn token is empty!');
+    // } else {
+    //   var sendMap = <String, dynamic>{
+    //     "mid": mid,
+    //     "orderId": orderId,
+    //     "amount": amount,
+    //     "txnToken": txnToken,
+    //     "callbackUrl":
+    //         'https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=${orderId}',
+    //     "isStaging": isStaging,
+    //     "restrictAppInvoke": restrictAppInvoke,
+    //     "enableAssist": enableAssist
+    //   };
+    //   print('Data map for paytm: ' + sendMap.toString());
+    // try {
+    var response = await AllInOneSdk.startTransaction(
+        mid,
+        orderId,
+        amount,
+        txnToken,
+        "https://securegw-stage.paytm.in/theia/paytmCallback?ORDER_ID=${orderId}",
+        isStaging,
+        restrictAppInvoke,
+        enableAssist);
+    // response.then((value) {
+    //   checkPaymentStatus(orderId);
+    //   print(value);
+    //   setState(() {
+    //     result = value.toString();
+    //   });
+    // }).catchError((onError) {
+    //   if (onError is PlatformException) {
+    //     setState(() {
+    //       result = onError.message.toString() +
+    //           " \n  " +
+    //           onError.details.toString();
+    //     });
+    //   } else {
+    //     setState(() {
+    //       result = onError.toString();
+    //     });
+    //   }
+    //   });
+    // }
+    // catch (err) {
+    //   result = err.toString();
+    //}
+    // }
   }
 
   @override
@@ -293,30 +305,32 @@ class _SubscriptionState extends State<Subscription> {
                                   GestureDetector(
                                     onTap: () {
                                       setState(() {
-                                        getTxnToken(
-                                                '${snapshot.data!.data[0].amount}')
-                                            .then((value) {
-                                          //if (paymentStatusCode == '01') {
-                                          print(
-                                              'PAYTM SUCCESSSSSSSDDDUUUUUUUULLLLLLLL-LLLLLL------------------------------------------------------------');
-                                          addSubscriptionPlan(
-                                                  widget.userid,
-                                                  '${snapshot.data!.data[0].planId}',
-                                                  context)
-                                              .then((value) {
-                                            setState(() {
-                                              currentSubs =
-                                                  SubscriptionPlanServices
-                                                      .getCurrentUserPlan(
-                                                          widget.userid);
-                                            });
-                                          });
-                                          //}
-                                        });
-                                        planOne = true;
-                                        planTwo = false;
+                                        planOne = false;
+                                        planTwo = true;
                                         planThird = false;
                                       });
+                                      getTxnToken(
+                                          '${snapshot.data!.data[0].amount}',
+                                          '${snapshot.data!.data[0].planId}');
+                                      //.then((value) {
+                                      //   if (paymentStatusCode ==
+                                      //       'TXN_SUCCESS') {
+                                      //     print(
+                                      //         'PAYTM SUCCESSSSSSSDDDUUUUUUUULLLLLLLL-LLLLLL------------------------------------------------------------');
+                                      //     addSubscriptionPlan(
+                                      //             widget.userid,
+                                      //             '${snapshot.data!.data[0].planId}',
+                                      //             context)
+                                      //         .then((value) {
+                                      //       setState(() {
+                                      //         currentSubs =
+                                      //             SubscriptionPlanServices
+                                      //                 .getCurrentUserPlan(
+                                      //                     widget.userid);
+                                      //       });
+                                      //     });
+                                      //   }
+                                      // });
                                     },
                                     child: Container(
                                       width: double.infinity,
@@ -434,19 +448,10 @@ class _SubscriptionState extends State<Subscription> {
                                                 planOne = false;
                                                 planTwo = true;
                                                 planThird = false;
-                                                addSubscriptionPlan(
-                                                        widget.userid,
-                                                        '${snapshot.data!.data[1].planId}',
-                                                        context)
-                                                    .then((value) {
-                                                  setState(() {
-                                                    currentSubs =
-                                                        SubscriptionPlanServices
-                                                            .getCurrentUserPlan(
-                                                                widget.userid);
-                                                  });
-                                                });
                                               });
+                                              getTxnToken(
+                                                  '${snapshot.data!.data[0].amount}',
+                                                  '${snapshot.data!.data[0].planId}');
                                             },
                                             child: Container(
                                               width: double.infinity,
@@ -588,19 +593,10 @@ class _SubscriptionState extends State<Subscription> {
                                         planOne = false;
                                         planTwo = false;
                                         planThird = true;
-                                        addSubscriptionPlan(
-                                                widget.userid,
-                                                '${snapshot.data!.data[2].planId}',
-                                                context)
-                                            .then((value) {
-                                          setState(() {
-                                            currentSubs =
-                                                SubscriptionPlanServices
-                                                    .getCurrentUserPlan(
-                                                        widget.userid);
-                                          });
-                                        });
                                       });
+                                      getTxnToken(
+                                          '${snapshot.data!.data[0].amount}',
+                                          '${snapshot.data!.data[0].planId}');
                                     },
                                     child: Container(
                                       width: double.infinity,

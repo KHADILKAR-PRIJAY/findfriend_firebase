@@ -34,7 +34,7 @@ class _GeneralPageState extends State<GeneralPage> {
         HomePage(widget.userid),
         NotificationPage(widget.userid),
         CallHistory(widget.userid),
-        Chats(),
+        Chats(widget.userid),
         UserProfile(widget.userid)
       ];
   @override

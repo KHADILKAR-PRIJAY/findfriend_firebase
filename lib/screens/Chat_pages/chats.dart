@@ -13,7 +13,8 @@ const String url = 'http://findfriend.notionprojects.tech/api/friends.php';
 bool thi = false;
 
 class Chats extends StatefulWidget {
-  Chats();
+  String userid;
+  Chats(this.userid);
 
   @override
   _ChatsState createState() => _ChatsState();
@@ -134,7 +135,9 @@ class _ChatsState extends State<Chats> {
                 ],
               ),
             ),
-            (selectedIndex == 1) ? Expanded(child: ChatView()) : FriendsView()
+            (selectedIndex == 1)
+                ? Expanded(child: ChatView())
+                : FriendsView(widget.userid)
           ],
         ),
       ),
@@ -277,14 +280,18 @@ class _ChatRoomTileState extends State<ChatRoomTile> {
 }
 
 class FriendsView extends StatefulWidget {
+  late String userid;
+  FriendsView(this.userid);
   @override
   _FriendsViewState createState() => _FriendsViewState();
 }
 
 class _FriendsViewState extends State<FriendsView> {
-  Future postFriends() async {
-    var response =
-        await http.post(Uri.parse(url), body: {'token': '123456789'});
+  Future getFriendsList() async {
+    var response = await http.post(
+      Uri.parse(url),
+      body: {'token': '123456789', 'user_id': widget.userid},
+    );
     print(response.body);
     setState(() {
       fm = jsonDecode(response.body)['data'];
@@ -301,7 +308,7 @@ class _FriendsViewState extends State<FriendsView> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    postFriends();
+    getFriendsList();
     print("chat called");
   }
 
@@ -331,8 +338,8 @@ class _FriendsViewState extends State<FriendsView> {
                           radius: 19,
                           child: CircleAvatar(
                               radius: 19,
-                              backgroundImage:
-                                  AssetImage('assets/images/girl.jpg')),
+                              backgroundImage: NetworkImage(
+                                  fm[index]['profile_image'].toString())),
                         ),
                         Positioned(
                           top: 0,
@@ -352,9 +359,10 @@ class _FriendsViewState extends State<FriendsView> {
                             style: TextStyle(color: Colors.grey))
                         : Text('Active 15m ago',
                             style: TextStyle(color: Colors.grey)),
-                    trailing: (index == 1 || index == 5)
-                        ? FollowButton()
-                        : FollowingButton());
+                    // trailing: (index == 1 || index == 5)
+                    //     ? FollowButton()
+                    //     : FollowingButton()
+                  );
           }),
     );
   }

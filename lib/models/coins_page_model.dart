@@ -1,13 +1,13 @@
 // To parse this JSON data, do
 //
-//     final coinsPageModel = coinsPageModelFromJson(jsonString);
+//     final coinsPageModelProfile = coinsPageModelProfileFromJson(jsonString);
 
 import 'dart:convert';
 
-CoinsPageModelProfile coinsPageModelFromJson(String str) =>
+CoinsPageModelProfile coinsPageModelProfileFromJson(String str) =>
     CoinsPageModelProfile.fromJson(json.decode(str));
 
-String coinsPageModelToJson(CoinsPageModelProfile data) =>
+String coinsPageModelProfileToJson(CoinsPageModelProfile data) =>
     json.encode(data.toJson());
 
 class CoinsPageModelProfile {
@@ -42,6 +42,7 @@ class Datum {
     required this.username,
     required this.profilePicture,
     required this.totalCoins,
+    required this.isVip,
   });
 
   String id;
@@ -49,6 +50,7 @@ class Datum {
   String username;
   String profilePicture;
   String totalCoins;
+  String isVip;
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
         id: json["id"],
@@ -56,6 +58,7 @@ class Datum {
         username: json["username"],
         profilePicture: json["profile_picture"],
         totalCoins: json["total_coins"],
+        isVip: json["is_vip"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -64,5 +67,6 @@ class Datum {
         "username": username,
         "profile_picture": profilePicture,
         "total_coins": totalCoins,
+        "is_vip": isVip,
       };
 }

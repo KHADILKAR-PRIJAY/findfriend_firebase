@@ -22,8 +22,6 @@ import 'package:find_friend/screens/log_in.dart';
 import 'package:find_friend/screens/general_page.dart';
 import 'package:find_friend/screens/splash_screen.dart';
 import 'package:find_friend/screens/coins_screen/coins.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -75,7 +73,7 @@ class _MyAppState extends State<MyApp> {
         //Subscription.id: (context) => Subscription(),
         AboutUs.id: (context) => AboutUs(),
         PrivacyPolicy.id: (context) => PrivacyPolicy(),
-        VipMember.id: (context) => VipMember(),
+        //VipMember.id: (context) => VipMember(),
         //EditProfile.id: (context) => EditProfile(),
         //SearchPage.id: (context) => SearchPage(),
         //Followers.id: (context) => Followers(),

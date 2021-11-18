@@ -23,15 +23,12 @@ environment:
 dependencies:
   image_picker: ^0.8.4
   cached_network_image: ^3.1.0
-  rating_dialog: ^2.0.0
   csc_picker: ^0.2.5
   country_state_city_pro: ^0.0.3
   http: ^0.13.3
   font_awesome_flutter: ^9.1.0
   flutter_svg: ^0.22.0
   sms_autofill: ^2.0.1
-  internet_connection_checker: ^0.0.1+2
-  connectivity_plus: ^1.1.0
   firebase_analytics: ^8.3.2
   firebase_core: ^1.6.0
   firebase_messaging: ^10.0.7

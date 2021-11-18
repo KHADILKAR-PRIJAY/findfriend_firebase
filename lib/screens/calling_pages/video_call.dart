@@ -5,6 +5,7 @@ import 'package:agora_uikit/models/agora_settings.dart';
 import 'package:agora_uikit/models/agora_user.dart';
 import 'package:find_friend/firebase_notification_handler/notification_handler.dart';
 import 'package:find_friend/services/add_call_history.dart';
+import 'package:find_friend/services/check_balance.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
@@ -98,12 +99,27 @@ class _VideoCallPageState extends State<VideoCallPage> {
         },
         userJoined: (i, j) {
           setState(() {
+            (widget.callStatus == 'o')
+                ? CheckBalanceServices().checkvideobalance()
+                : null;
             _stopWatchTimer.onExecute.add(StopWatchExecute.start);
             _stopWatchTimer.onChange;
             _timer = Timer.periodic(Duration(seconds: 59), (timer) {
               setState(() {
                 print(
                     'hello after 5 secsssssssssssssssssssssssssssssssssss video');
+                (widget.callStatus == 'o')
+                    ? CheckBalanceServices().checkvideobalance().then((value) {
+                        print(value['data']['status'].toString());
+                        if (value['data']['status'].toString() == 'n') {
+                          timer.cancel();
+                          _stopWatchTimer.onExecute.add(StopWatchExecute.stop);
+                          client.sessionController.endCall();
+                          client.sessionController.dispose();
+                          Navigator.pop(context);
+                        } else {}
+                      })
+                    : null;
               });
             });
 

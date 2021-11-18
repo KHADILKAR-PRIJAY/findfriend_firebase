@@ -10,6 +10,20 @@ const String unfollowURL =
 const String removeURL =
     'http://findfriend.notionprojects.tech/api/remove_follow_user.php';
 
+final InputDecoration textfieldDecoration = InputDecoration(
+    isDense: true,
+    filled: true,
+    hintText: 'Search',
+    hintStyle: TextStyle(color: Color(0xFFF0EEEF)),
+    fillColor: Color(0xFF6A6A6C),
+    prefixIcon: Icon(Icons.search, color: Color(0xFFF0EEEF)),
+    border: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.pink, width: 10),
+        borderRadius: BorderRadius.circular(10)),
+    enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(color: Colors.black),
+        borderRadius: BorderRadius.circular(10)));
+
 class Followers extends StatefulWidget {
   final int index;
   static String id = 'followers';
@@ -32,7 +46,8 @@ class _FollowersState extends State<Followers> {
   late Future<FollowingListModel> followinglistmodel;
   late int lenghtFollowing;
   late int lenghtFollowers;
-
+  TextEditingController _followerCont = TextEditingController();
+  TextEditingController _followingCont = TextEditingController();
   List<FollowerListModelDatum> _foundUsersFollowers = [];
   List<FollowerListModelDatum> _allUsersFollowers = [];
 
@@ -86,7 +101,7 @@ class _FollowersState extends State<Followers> {
     super.initState();
   }
 
-  void _runFilter(String enteredKeyword) {
+  void _runFilterFollower(String enteredKeyword) {
     List<FollowerListModelDatum> results = [];
     if (enteredKeyword.isEmpty) {
       // if the search field is empty or only contains white-space, we'll display all users
@@ -106,7 +121,7 @@ class _FollowersState extends State<Followers> {
     });
   }
 
-  void _run(String enteredKeyword) {
+  void _runFilterFollowing(String enteredKeyword) {
     List<FollowingListModelDatum> results = [];
     if (enteredKeyword.isEmpty) {
       // if the search field is empty or only contains white-space, we'll display all users
@@ -197,23 +212,16 @@ class _FollowersState extends State<Followers> {
                 onTap: () {
                   //Navigator.pushNamed(context, SearchPage.id);
                 },
-                child: TextField(
-                  decoration: InputDecoration(
-                      isDense: true,
-                      filled: true,
-                      hintText: 'Search',
-                      hintStyle: TextStyle(color: Color(0xFFF0EEEF)),
-                      fillColor: Color(0xFF6A6A6C),
-                      prefixIcon: Icon(Icons.search, color: Color(0xFFF0EEEF)),
-                      border: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.pink, width: 10),
-                          borderRadius: BorderRadius.circular(10)),
-                      enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.black),
-                          borderRadius: BorderRadius.circular(10))),
-                  onChanged: (value) =>
-                      (selectedIndex == 1) ? _runFilter(value) : _run(value),
-                ),
+                child: (selectedIndex == 1)
+                    ? TextField(
+                        controller: _followerCont,
+                        decoration: textfieldDecoration,
+                        onChanged: (value) => _runFilterFollower(value))
+                    : TextField(
+                        controller: _followingCont,
+                        decoration: textfieldDecoration,
+                        onChanged: (value) => _runFilterFollowing(value),
+                      ),
               ),
             ),
             Padding(

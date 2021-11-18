@@ -1,6 +1,5 @@
 import 'package:find_friend/components/drawer_button.dart';
 import 'package:find_friend/screens/contact_us.dart';
-import 'package:rating_dialog/rating_dialog.dart';
 import 'VIP_screen/verification.dart';
 import 'VIP_screen/vip_member.dart';
 import 'coins_screen/coins.dart';
@@ -9,19 +8,15 @@ import 'package:find_friend/screens/subscription.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class NavigationDrawer extends StatefulWidget {
+class NavigationDrawer extends StatelessWidget {
   late String userid;
   late String username;
   late String fullname;
   late String profilepicture;
   NavigationDrawer(
       this.userid, this.username, this.fullname, this.profilepicture);
-  @override
-  _NavigationDrawerState createState() => _NavigationDrawerState();
-}
 
-class _NavigationDrawerState extends State<NavigationDrawer> {
-  bool toggle = false;
+  //bool toggle = false;
 
   // void _showRatingAppDialog() {
   //   final _ratingDialog = RatingDialog(
@@ -74,13 +69,12 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                         radius: 33,
                         child: CircleAvatar(
                             radius: 32,
-                            backgroundImage:
-                                NetworkImage(widget.profilepicture)),
+                            backgroundImage: NetworkImage(profilepicture)),
                       ),
                     ),
-                    Text(widget.fullname),
+                    Text(fullname),
                     Text(
-                      '@' + widget.username,
+                      '@' + username,
                       style:
                           TextStyle(color: Color(0xffF0EEEF).withOpacity(0.6)),
                     ),
@@ -126,7 +120,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => Verification(widget.userid)));
+                        builder: (context) => Verification(userid)));
                 //Navigator.pushNamed(context, Verification.id);
               }),
               Divider(
@@ -134,10 +128,8 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                 thickness: 1,
               ),
               DrawerButton('Wallet', Icons.account_balance_wallet, () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Coins(widget.userid)));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Coins(userid)));
                 //Navigator.pushNamed(context, AddCoins.id);
               }),
               Divider(
@@ -145,7 +137,8 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                 thickness: 1,
               ),
               DrawerButton('VIP', Icons.person, () {
-                Navigator.pushNamed(context, VipMember.id);
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => VipMember(userid)));
               }),
               Divider(
                 color: Colors.grey,
@@ -155,7 +148,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => Subscription(widget.userid)));
+                        builder: (context) => Subscription(userid)));
                 //Navigator.pushNamed(context, Subscription.id);
               }),
               Divider(
@@ -180,11 +173,7 @@ class _NavigationDrawerState extends State<NavigationDrawer> {
                 color: Colors.grey,
                 thickness: 1,
               ),
-              DrawerButton('Rate Us', Icons.star_half, () {
-                setState(() {
-                  // _showRatingAppDialog();
-                });
-              }),
+              DrawerButton('Rate Us', Icons.star_half, () {}),
               Divider(
                 color: Colors.grey,
                 thickness: 1,

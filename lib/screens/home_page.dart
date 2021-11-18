@@ -11,7 +11,6 @@ import 'package:find_friend/services/fetch_home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:internet_connection_checker/internet_connection_checker.dart';
 
 import 'Chat_pages/database.dart';
 import 'coins_screen/coins.dart';
@@ -41,56 +40,58 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   late String username;
   late String fullname;
   late String profileimage;
-  late bool isConnected;
+  late String totalCoins;
+  //late bool isConnected;
 
-  Future<void> Check_internet() async {
-    // Simple check to see if we have Internet
-    // ignore: avoid_print
-    print('The statement \'this machine is connected to the Internet\' is: ');
-    final isConnected = await InternetConnectionChecker().hasConnection;
-    // ignore: avoid_print
-    print(
-      isConnected.toString(),
-    );
-    // returns a bool
-
-    // We can also get an enum instead of a bool
-    // ignore: avoid_print
-    print(
-        'Current status: ${await InternetConnectionChecker().connectionStatus}');
-    // Prints either InternetConnectionStatus.connected
-    // or InternetConnectionStatus.disconnected
-
-    // actively listen for status updates
-    StreamSubscription<InternetConnectionStatus> listener =
-        InternetConnectionChecker().onStatusChange.listen(
-      (InternetConnectionStatus status) {
-        switch (status) {
-          case InternetConnectionStatus.connected:
-            // ignore: avoid_print
-            print('Data connection is available.');
-            break;
-          case InternetConnectionStatus.disconnected:
-            // ignore: avoid_print
-            print('You are disconnected from the internet.');
-            break;
-        }
-      },
-    );
-
-    // close listener after 30 seconds, so the program doesn't run forever
-    await Future<void>.delayed(const Duration(seconds: 30));
-    await listener.cancel();
-  }
+  // Future<void> Check_internet() async {
+  //   // Simple check to see if we have Internet
+  //   // ignore: avoid_print
+  //   print('The statement \'this machine is connected to the Internet\' is: ');
+  //   final isConnected = await InternetConnectionChecker().hasConnection;
+  //   // ignore: avoid_print
+  //   print(
+  //     isConnected.toString(),
+  //   );
+  //   // returns a bool
+  //
+  //   // We can also get an enum instead of a bool
+  //   // ignore: avoid_print
+  //   print(
+  //       'Current status: ${await InternetConnectionChecker().connectionStatus}');
+  //   // Prints either InternetConnectionStatus.connected
+  //   // or InternetConnectionStatus.disconnected
+  //
+  //   // actively listen for status updates
+  //   StreamSubscription<InternetConnectionStatus> listener =
+  //       InternetConnectionChecker().onStatusChange.listen(
+  //     (InternetConnectionStatus status) {
+  //       switch (status) {
+  //         case InternetConnectionStatus.connected:
+  //           // ignore: avoid_print
+  //           print('Data connection is available.');
+  //           break;
+  //         case InternetConnectionStatus.disconnected:
+  //           // ignore: avoid_print
+  //           print('You are disconnected from the internet.');
+  //           break;
+  //       }
+  //     },
+  //   );
+  //
+  //   // close listener after 30 seconds, so the program doesn't run forever
+  //   await Future<void>.delayed(const Duration(seconds: 30));
+  //   await listener.cancel();
+  // }
 
   @override
   void initState() {
     //User presence-----------------------------------
-    WidgetsBinding.instance!.addObserver(this);
-    setStatus('online');
+    // WidgetsBinding.instance!.addObserver(this);
+    // setStatus('online');
 
     //-------------------------------------------------
-    Check_internet();
+    //Check_internet();
+
     check = true;
 
     //Home services-----------------------------------
@@ -113,9 +114,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
     //Coin services
     coinspagemodel = CoinPageServices.getCoinPage(widget.userid).then((value) {
+      print(value.toString());
       username = value.data[0].username;
       fullname = value.data[0].fullName;
       profileimage = value.data[0].profilePicture;
+      totalCoins = value.data[0].totalCoins;
       return value;
     });
 
@@ -190,7 +193,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               )),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Center(child: Text('548')),
+            child: Center(child: Text(totalCoins)),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -198,483 +201,461 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               icon: Icon(Icons.add_box),
               onPressed: () {
                 Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Coins(widget.userid)));
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Coins(widget.userid)))
+                    .then((value) {
+                  setState(() {
+                    coinspagemodel =
+                        CoinPageServices.getCoinPage(widget.userid);
+                  });
+                });
                 //Navigator.pushNamed(context, Coins.id);
               },
             ),
           )
         ],
       ),
-      body: (dataLength == 0)
-          ? Center(
-              child: Text(
-              'no data.......',
-              style: TextStyle(color: Colors.yellow),
-            ))
-          : Column(
-              mainAxisSize: MainAxisSize.min,
+      body: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Stack(
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Stack(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                check = true;
-                                homeUnderline = true;
-                                VIPUnderline = false;
-                              });
-                            },
-                            child: Container(
-                              width: 50,
-                              child: Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: Text(
-                                      'Home',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w700),
-                                    ),
-                                  ),
-                                  (homeUnderline)
-                                      ? Container(
-                                          color: Colors.white,
-                                          height: 2,
-                                          width: 50)
-                                      : Container(height: 2)
-                                ],
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          check = true;
+                          homeUnderline = true;
+                          VIPUnderline = false;
+                        });
+                      },
+                      child: Container(
+                        width: 50,
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Text(
+                                'Home',
+                                style: TextStyle(fontWeight: FontWeight.w700),
                               ),
                             ),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                check = false;
-                                homeUnderline = false;
-                                VIPUnderline = true;
-                              });
-                            },
-                            child: Container(
-                              width: 50,
-                              child: Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: Text(
-                                      'VIP',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w700),
-                                    ),
-                                  ),
-                                  (VIPUnderline)
-                                      ? Container(
-                                          color: Colors.white,
-                                          height: 2,
-                                          width: 50)
-                                      : Container(height: 2)
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
+                            (homeUnderline)
+                                ? Container(
+                                    color: Colors.white, height: 2, width: 50)
+                                : Container(height: 2)
+                          ],
+                        ),
                       ),
-                      Align(
-                          alignment: Alignment.topRight,
-                          child: GestureDetector(
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 9.0),
-                              child: Icon(Icons.search, color: Colors.white),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          check = false;
+                          homeUnderline = false;
+                          VIPUnderline = true;
+                        });
+                      },
+                      child: Container(
+                        width: 50,
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(4.0),
+                              child: Text(
+                                'VIP',
+                                style: TextStyle(fontWeight: FontWeight.w700),
+                              ),
                             ),
-                            onTap: () {
-                              //Navigator.pushNamed(context, SearchPage.id);
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          SearchPage(widget.userid)));
-                            },
-                          )),
-                    ],
-                  ),
+                            (VIPUnderline)
+                                ? Container(
+                                    color: Colors.white, height: 2, width: 50)
+                                : Container(height: 2)
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                Expanded(
-                  child: Stack(
-                    children: [
-                      FutureBuilder<Homes>(
-                          future: (check) ? home : vip,
-                          builder: (context, snapshot) {
-                            return ListView.builder(
-                              physics: PageScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: snapshot.data!.data!.length,
-                              scrollDirection: Axis.vertical,
-                              itemBuilder: (context, index) {
-                                return ConstrainedBox(
-                                  constraints: BoxConstraints(
-                                      maxHeight:
-                                          MediaQuery.of(context).size.height *
-                                              0.75),
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(10),
-                                      child: Stack(
+                Align(
+                    alignment: Alignment.topRight,
+                    child: GestureDetector(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 9.0),
+                        child: Icon(Icons.search, color: Colors.white),
+                      ),
+                      onTap: () {
+                        //Navigator.pushNamed(context, SearchPage.id);
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    SearchPage(widget.userid)));
+                      },
+                    )),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Stack(
+              children: [
+                FutureBuilder<Homes>(
+                    future: (check) ? home : vip,
+                    builder: (context, snapshot) {
+                      return ListView.builder(
+                        physics: PageScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: snapshot.data!.data!.length,
+                        scrollDirection: Axis.vertical,
+                        itemBuilder: (context, index) {
+                          return ConstrainedBox(
+                            constraints: BoxConstraints(
+                                maxHeight:
+                                    MediaQuery.of(context).size.height * 0.75),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: Stack(
+                                  children: [
+                                    Container(
+                                      child: Image.network(
+                                        '${snapshot.data!.data![index].profileImage}',
+                                        height:
+                                            MediaQuery.of(context).size.height,
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Container(
-                                            child: Image.network(
-                                              '${snapshot.data!.data![index].profileImage}',
-                                              height: MediaQuery.of(context)
-                                                  .size
-                                                  .height,
-                                              width: MediaQuery.of(context)
-                                                  .size
-                                                  .width,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(10.0),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Column(
-                                                  // crossAxisAlignment:
-                                                  //     CrossAxisAlignment
-                                                  //         .start,
-                                                  children: [
-                                                    Container(
-                                                      // decoration: BoxDecoration(
-                                                      //   border: Border(
-                                                      //     right: BorderSide(
-                                                      //         color:
-                                                      //             Colors.white,
-                                                      //         width: 1),
-                                                      //     bottom: BorderSide(
-                                                      //         color:
-                                                      //             Colors.white,
-                                                      //         width: 1),
-                                                      //   ),
-                                                      // ),
-                                                      child: Container(
-                                                        child: Row(
-                                                          mainAxisSize:
-                                                              MainAxisSize.min,
-                                                          children: [
-                                                            Icon(
-                                                                Icons
-                                                                    .location_on,
-                                                                size: 20,
-                                                                color: Colors
-                                                                    .white),
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(6.0),
-                                                              child: Text(
-                                                                '${snapshot.data!.data![index].city}',
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        14),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      decoration: BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(5),
-                                                          color: Colors
-                                                              .transparent
-                                                              .withOpacity(
-                                                                  0.1)),
-                                                    ),
-                                                  ],
-                                                ),
-
-                                                ////////////
-                                                Padding(
-                                                  padding: const EdgeInsets.all(
-                                                      12.0),
+                                          Column(
+                                            // crossAxisAlignment:
+                                            //     CrossAxisAlignment
+                                            //         .start,
+                                            children: [
+                                              Container(
+                                                // decoration: BoxDecoration(
+                                                //   border: Border(
+                                                //     right: BorderSide(
+                                                //         color:
+                                                //             Colors.white,
+                                                //         width: 1),
+                                                //     bottom: BorderSide(
+                                                //         color:
+                                                //             Colors.white,
+                                                //         width: 1),
+                                                //   ),
+                                                // ),
+                                                child: Container(
                                                   child: Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
                                                     children: [
-                                                      Stack(
-                                                        children: [
-                                                          GestureDetector(
-                                                            onTap: () {
-                                                              setState(() {
-                                                                print(
-                                                                    '${snapshot.data!.data![index].username}');
-                                                                Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                        builder: (context) => OthersProfilePage(
-                                                                            username:
-                                                                                '${snapshot.data!.data![index].username}',
-                                                                            userid: widget
-                                                                                .userid,
-                                                                            othersid:
-                                                                                '${snapshot.data!.data![index].userId}',
-                                                                            otherUser_FCMtoken:
-                                                                                '${snapshot.data!.data![index].fcmToken}')));
-                                                                // Navigator.pushNamed(context,
-                                                                //     OthersProfilePage.id,
-                                                                //     arguments: {
-                                                                //       'keyvalue': snapshot
-                                                                //           .data!
-                                                                //           .data![index]
-                                                                //           .username
-                                                                //     });
-                                                              });
-                                                            },
-                                                            child: CircleAvatar(
-                                                              backgroundColor:
-                                                                  Color(
-                                                                      0xFF6A6A6C),
-                                                              radius: 23,
-                                                              child: CircleAvatar(
-                                                                  radius: 22,
-                                                                  backgroundImage:
-                                                                      NetworkImage(
-                                                                          '${snapshot.data!.data![index].profileImage}')),
-                                                            ),
-                                                          ),
-                                                          Positioned(
-                                                            top: 0,
-                                                            left: 28,
-                                                            child: CircleAvatar(
-                                                              backgroundColor:
-                                                                  Color(
-                                                                      0xFF1FDEB3),
-                                                              radius: 4,
-                                                            ),
-                                                          )
-                                                        ],
-                                                      ),
-                                                      SizedBox(width: 12),
-                                                      Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Row(
-                                                            children: [
-                                                              Text(
-                                                                  '${snapshot.data!.data![index].username} '),
-                                                              Icon(
-                                                                FontAwesomeIcons
-                                                                    .solidCheckCircle,
-                                                                color: Color(
-                                                                    0xff2596BE),
-                                                                size: 14,
-                                                              )
-                                                            ],
-                                                          ),
-                                                          SizedBox(height: 2),
-                                                          Text(
-                                                            '@ ${snapshot.data!.data![index].fullName}',
-                                                            style: TextStyle(
-                                                                color:
-                                                                    Colors.grey,
-                                                                fontSize: 12),
-                                                          )
-                                                        ],
+                                                      Icon(Icons.location_on,
+                                                          size: 20,
+                                                          color: Colors.white),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(6.0),
+                                                        child: Text(
+                                                          '${snapshot.data!.data![index].city}',
+                                                          style: TextStyle(
+                                                              fontSize: 14),
+                                                        ),
                                                       ),
                                                     ],
                                                   ),
                                                 ),
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            5),
+                                                    color: Colors.transparent
+                                                        .withOpacity(0.1)),
+                                              ),
+                                            ],
+                                          ),
+
+                                          ////////////
+                                          Padding(
+                                            padding: const EdgeInsets.all(12.0),
+                                            child: Row(
+                                              children: [
+                                                Stack(
+                                                  children: [
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        setState(() {
+                                                          print(
+                                                              '${snapshot.data!.data![index].username}');
+                                                          Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder: (context) => OthersProfilePage(
+                                                                      username:
+                                                                          '${snapshot.data!.data![index].username}',
+                                                                      userid: widget
+                                                                          .userid,
+                                                                      othersid:
+                                                                          '${snapshot.data!.data![index].userId}',
+                                                                      otherUser_FCMtoken:
+                                                                          '${snapshot.data!.data![index].fcmToken}')));
+                                                          // Navigator.pushNamed(context,
+                                                          //     OthersProfilePage.id,
+                                                          //     arguments: {
+                                                          //       'keyvalue': snapshot
+                                                          //           .data!
+                                                          //           .data![index]
+                                                          //           .username
+                                                          //     });
+                                                        });
+                                                      },
+                                                      child: CircleAvatar(
+                                                        backgroundColor:
+                                                            Color(0xFF6A6A6C),
+                                                        radius: 23,
+                                                        child: CircleAvatar(
+                                                            radius: 22,
+                                                            backgroundImage:
+                                                                NetworkImage(
+                                                                    '${snapshot.data!.data![index].profileImage}')),
+                                                      ),
+                                                    ),
+                                                    Positioned(
+                                                      top: 0,
+                                                      left: 28,
+                                                      child: CircleAvatar(
+                                                        backgroundColor:
+                                                            Color(0xFF1FDEB3),
+                                                        radius: 4,
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                                SizedBox(width: 12),
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Row(
+                                                      children: [
+                                                        Text(
+                                                            '${snapshot.data!.data![index].username} '),
+                                                        Icon(
+                                                          FontAwesomeIcons
+                                                              .solidCheckCircle,
+                                                          color:
+                                                              Color(0xff2596BE),
+                                                          size: 14,
+                                                        )
+                                                      ],
+                                                    ),
+                                                    SizedBox(height: 2),
+                                                    Text(
+                                                      '@ ${snapshot.data!.data![index].fullName}',
+                                                      style: TextStyle(
+                                                          color: Colors.grey,
+                                                          fontSize: 12),
+                                                    )
+                                                  ],
+                                                ),
                                               ],
                                             ),
                                           ),
-                                          // Align(
-                                          //   alignment: Alignment.bottomRight,
-                                          //   child: Padding(
-                                          //     padding:
-                                          //         const EdgeInsets.all(4.0),
-                                          //     child: Column(
-                                          //       mainAxisAlignment:
-                                          //           MainAxisAlignment.end,
-                                          //       children: [
-                                          //         Stack(
-                                          //           children: [
-                                          //             GestureDetector(
-                                          //               onTap: () {
-                                          //                 setState(() {
-                                          //                   print(
-                                          //                       '${snapshot.data!.data![index].username}');
-                                          //                   Navigator.push(
-                                          //                       context,
-                                          //                       MaterialPageRoute(
-                                          //                           builder: (context) => OthersProfilePage(
-                                          //                               username:
-                                          //                                   '${snapshot.data!.data![index].username}',
-                                          //                               userid: widget
-                                          //                                   .userid,
-                                          //                               othersid:
-                                          //                                   '${snapshot.data!.data![index].userId}')));
-                                          //                   // Navigator.pushNamed(context,
-                                          //                   //     OthersProfilePage.id,
-                                          //                   //     arguments: {
-                                          //                   //       'keyvalue': snapshot
-                                          //                   //           .data!
-                                          //                   //           .data![index]
-                                          //                   //           .username
-                                          //                   //     });
-                                          //                 });
-                                          //               },
-                                          //               child: CircleAvatar(
-                                          //                 backgroundColor:
-                                          //                     Color(0xFF6A6A6C),
-                                          //                 radius: 19,
-                                          //                 child: CircleAvatar(
-                                          //                     radius: 19,
-                                          //                     backgroundImage:
-                                          //                         NetworkImage(
-                                          //                             '${snapshot.data!.data![index].profileImage}')),
-                                          //               ),
-                                          //             ),
-                                          //             Positioned(
-                                          //               top: 0,
-                                          //               left: 28,
-                                          //               child: CircleAvatar(
-                                          //                 backgroundColor:
-                                          //                     Color(0xFF1FDEB3),
-                                          //                 radius: 4,
-                                          //               ),
-                                          //             )
-                                          //           ],
-                                          //         ),
-                                          //         // IconButton(
-                                          //         //   icon: Icon(
-                                          //         //       Icons
-                                          //         //           .add_circle_outline,
-                                          //         //       color: Colors.white),
-                                          //         //   onPressed: () {},
-                                          //         // ),
-                                          //         Column(
-                                          //           children: [
-                                          //             Padding(
-                                          //               padding:
-                                          //                   const EdgeInsets
-                                          //                       .all(8.0),
-                                          //               child: IconButton(
-                                          //                 icon: Icon(
-                                          //                     FontAwesomeIcons
-                                          //                         .facebookMessenger,
-                                          //                     color:
-                                          //                         Colors.white),
-                                          //                 onPressed: () {
-                                          //                   Navigator.pushNamed(
-                                          //                       context,
-                                          //                       MessagePage.id);
-                                          //                 },
-                                          //               ),
-                                          //             ),
-                                          //             Padding(
-                                          //               padding:
-                                          //                   const EdgeInsets
-                                          //                       .all(8.0),
-                                          //               child: IconButton(
-                                          //                   icon: Icon(Icons
-                                          //                       .video_call),
-                                          //                   color: Colors.white,
-                                          //                   onPressed: () {
-                                          //                     ///////////////////////////////////////////
-                                          //                     generatechannel()
-                                          //                         .GenerateChannel()
-                                          //                         .then(
-                                          //                       (value) {
-                                          //                         setState(
-                                          //                           () {
-                                          //                             cn =
-                                          //                                 value;
-                                          //                             print(cn.toString() +
-                                          //                                 '////////////');
-                                          //                             sendnotification(
-                                          //                                 cn,
-                                          //                                 '${snapshot.data!.data![index].fcmToken}',
-                                          //                                 '0');
-                                          //                             Navigator.push(
-                                          //                                 context,
-                                          //                                 MaterialPageRoute(
-                                          //                                     builder: (context) => VideoCallPage(
-                                          //                                           //user_id: widget.user_id,
-                                          //                                           channelName: cn,
-                                          //                                         )));
-                                          //                           },
-                                          //                         );
-                                          //                       },
-                                          //                     );
-                                          //                   }),
-                                          //             ),
-                                          //             Padding(
-                                          //               padding:
-                                          //                   const EdgeInsets
-                                          //                       .all(8.0),
-                                          //               child: IconButton(
-                                          //                   icon: Icon(
-                                          //                       Icons.phone),
-                                          //                   color: Colors.white,
-                                          //                   onPressed: () {
-                                          //                     ///////////////////////////////////////////
-                                          //                     generatechannel()
-                                          //                         .GenerateChannel()
-                                          //                         .then(
-                                          //                       (value) {
-                                          //                         setState(
-                                          //                           () {
-                                          //                             cn =
-                                          //                                 value;
-                                          //                             print(cn.toString() +
-                                          //                                 '////////////');
-                                          //                             sendnotification(
-                                          //                                 cn,
-                                          //                                 '${snapshot.data!.data![index].fcmToken}',
-                                          //                                 '1');
-                                          //                             Navigator.push(
-                                          //                                 context,
-                                          //                                 MaterialPageRoute(
-                                          //                                     builder: (context) => VoiceCallPg(
-                                          //                                           //user_id: widget.user_id,
-                                          //                                           channelName: cn,
-                                          //                                         )));
-                                          //                           },
-                                          //                         );
-                                          //                       },
-                                          //                     );
-                                          //                   }),
-                                          //             ),
-                                          //           ],
-                                          //         ),
-                                          //       ],
-                                          //     ),
-                                          //   ),
-                                          // ),
                                         ],
                                       ),
                                     ),
-                                  ),
-                                );
-                              },
-                            );
-                          }),
-                    ],
-                  ),
-                ),
+                                    // Align(
+                                    //   alignment: Alignment.bottomRight,
+                                    //   child: Padding(
+                                    //     padding:
+                                    //         const EdgeInsets.all(4.0),
+                                    //     child: Column(
+                                    //       mainAxisAlignment:
+                                    //           MainAxisAlignment.end,
+                                    //       children: [
+                                    //         Stack(
+                                    //           children: [
+                                    //             GestureDetector(
+                                    //               onTap: () {
+                                    //                 setState(() {
+                                    //                   print(
+                                    //                       '${snapshot.data!.data![index].username}');
+                                    //                   Navigator.push(
+                                    //                       context,
+                                    //                       MaterialPageRoute(
+                                    //                           builder: (context) => OthersProfilePage(
+                                    //                               username:
+                                    //                                   '${snapshot.data!.data![index].username}',
+                                    //                               userid: widget
+                                    //                                   .userid,
+                                    //                               othersid:
+                                    //                                   '${snapshot.data!.data![index].userId}')));
+                                    //                   // Navigator.pushNamed(context,
+                                    //                   //     OthersProfilePage.id,
+                                    //                   //     arguments: {
+                                    //                   //       'keyvalue': snapshot
+                                    //                   //           .data!
+                                    //                   //           .data![index]
+                                    //                   //           .username
+                                    //                   //     });
+                                    //                 });
+                                    //               },
+                                    //               child: CircleAvatar(
+                                    //                 backgroundColor:
+                                    //                     Color(0xFF6A6A6C),
+                                    //                 radius: 19,
+                                    //                 child: CircleAvatar(
+                                    //                     radius: 19,
+                                    //                     backgroundImage:
+                                    //                         NetworkImage(
+                                    //                             '${snapshot.data!.data![index].profileImage}')),
+                                    //               ),
+                                    //             ),
+                                    //             Positioned(
+                                    //               top: 0,
+                                    //               left: 28,
+                                    //               child: CircleAvatar(
+                                    //                 backgroundColor:
+                                    //                     Color(0xFF1FDEB3),
+                                    //                 radius: 4,
+                                    //               ),
+                                    //             )
+                                    //           ],
+                                    //         ),
+                                    //         // IconButton(
+                                    //         //   icon: Icon(
+                                    //         //       Icons
+                                    //         //           .add_circle_outline,
+                                    //         //       color: Colors.white),
+                                    //         //   onPressed: () {},
+                                    //         // ),
+                                    //         Column(
+                                    //           children: [
+                                    //             Padding(
+                                    //               padding:
+                                    //                   const EdgeInsets
+                                    //                       .all(8.0),
+                                    //               child: IconButton(
+                                    //                 icon: Icon(
+                                    //                     FontAwesomeIcons
+                                    //                         .facebookMessenger,
+                                    //                     color:
+                                    //                         Colors.white),
+                                    //                 onPressed: () {
+                                    //                   Navigator.pushNamed(
+                                    //                       context,
+                                    //                       MessagePage.id);
+                                    //                 },
+                                    //               ),
+                                    //             ),
+                                    //             Padding(
+                                    //               padding:
+                                    //                   const EdgeInsets
+                                    //                       .all(8.0),
+                                    //               child: IconButton(
+                                    //                   icon: Icon(Icons
+                                    //                       .video_call),
+                                    //                   color: Colors.white,
+                                    //                   onPressed: () {
+                                    //                     ///////////////////////////////////////////
+                                    //                     generatechannel()
+                                    //                         .GenerateChannel()
+                                    //                         .then(
+                                    //                       (value) {
+                                    //                         setState(
+                                    //                           () {
+                                    //                             cn =
+                                    //                                 value;
+                                    //                             print(cn.toString() +
+                                    //                                 '////////////');
+                                    //                             sendnotification(
+                                    //                                 cn,
+                                    //                                 '${snapshot.data!.data![index].fcmToken}',
+                                    //                                 '0');
+                                    //                             Navigator.push(
+                                    //                                 context,
+                                    //                                 MaterialPageRoute(
+                                    //                                     builder: (context) => VideoCallPage(
+                                    //                                           //user_id: widget.user_id,
+                                    //                                           channelName: cn,
+                                    //                                         )));
+                                    //                           },
+                                    //                         );
+                                    //                       },
+                                    //                     );
+                                    //                   }),
+                                    //             ),
+                                    //             Padding(
+                                    //               padding:
+                                    //                   const EdgeInsets
+                                    //                       .all(8.0),
+                                    //               child: IconButton(
+                                    //                   icon: Icon(
+                                    //                       Icons.phone),
+                                    //                   color: Colors.white,
+                                    //                   onPressed: () {
+                                    //                     ///////////////////////////////////////////
+                                    //                     generatechannel()
+                                    //                         .GenerateChannel()
+                                    //                         .then(
+                                    //                       (value) {
+                                    //                         setState(
+                                    //                           () {
+                                    //                             cn =
+                                    //                                 value;
+                                    //                             print(cn.toString() +
+                                    //                                 '////////////');
+                                    //                             sendnotification(
+                                    //                                 cn,
+                                    //                                 '${snapshot.data!.data![index].fcmToken}',
+                                    //                                 '1');
+                                    //                             Navigator.push(
+                                    //                                 context,
+                                    //                                 MaterialPageRoute(
+                                    //                                     builder: (context) => VoiceCallPg(
+                                    //                                           //user_id: widget.user_id,
+                                    //                                           channelName: cn,
+                                    //                                         )));
+                                    //                           },
+                                    //                         );
+                                    //                       },
+                                    //                     );
+                                    //                   }),
+                                    //             ),
+                                    //           ],
+                                    //         ),
+                                    //       ],
+                                    //     ),
+                                    //   ),
+                                    // ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    }),
               ],
             ),
+          ),
+        ],
+      ),
     );
   }
 }
