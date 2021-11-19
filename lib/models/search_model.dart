@@ -40,6 +40,7 @@ class Datum {
     required this.username,
     required this.profileImage,
     required this.fcmToken,
+    required this.status,
   });
 
   String userId;
@@ -47,6 +48,7 @@ class Datum {
   String username;
   String profileImage;
   String fcmToken;
+  String status;
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
         userId: json["user_id"],
@@ -54,6 +56,7 @@ class Datum {
         username: json["username"],
         profileImage: json["profile_image"],
         fcmToken: json["fcm_token"],
+        status: json["status"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -62,5 +65,6 @@ class Datum {
         "username": username,
         "profile_image": profileImage,
         "fcm_token": fcmToken,
+        "status": status,
       };
 }

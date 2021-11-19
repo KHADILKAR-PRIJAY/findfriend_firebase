@@ -38,6 +38,7 @@ class _SubscriptionState extends State<Subscription> {
   bool restrictAppInvoke = true;
   bool enableAssist = true;
   late String paymentStatusCode;
+  late String checkActiveplan;
 
   Future addSubscriptionPlan(
       String userid, String planid, BuildContext context) async {
@@ -164,7 +165,10 @@ class _SubscriptionState extends State<Subscription> {
 
   @override
   void initState() {
-    subs = SubscriptionPlanServices.getPlans();
+    subs = SubscriptionPlanServices.getPlans().then((value) {
+      checkActiveplan = value.status.toString();
+      return value;
+    });
     currentSubs = SubscriptionPlanServices.getCurrentUserPlan(widget.userid);
     super.initState();
   }
@@ -309,9 +313,15 @@ class _SubscriptionState extends State<Subscription> {
                                         planTwo = true;
                                         planThird = false;
                                       });
-                                      getTxnToken(
-                                          '${snapshot.data!.data[0].amount}',
-                                          '${snapshot.data!.data[0].planId}');
+                                      if (checkActiveplan == 'false') {
+                                        getTxnToken(
+                                            '${snapshot.data!.data[0].amount}',
+                                            '${snapshot.data!.data[0].planId}');
+                                      } else {
+                                        print(
+                                            'activweeeeeeeeeeeeeeeeeeeeeeeeeeeeee');
+                                      }
+
                                       //.then((value) {
                                       //   if (paymentStatusCode ==
                                       //       'TXN_SUCCESS') {

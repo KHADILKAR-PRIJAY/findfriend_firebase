@@ -113,16 +113,23 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     });
 
     //Coin services
+
+    fetchUserDetails();
+    super.initState();
+  }
+
+  Future fetchUserDetails() async {
     coinspagemodel = CoinPageServices.getCoinPage(widget.userid).then((value) {
-      print(value.toString());
-      username = value.data[0].username;
-      fullname = value.data[0].fullName;
-      profileimage = value.data[0].profilePicture;
-      totalCoins = value.data[0].totalCoins;
+      setState(() {
+        print(value.toString());
+        username = value.data[0].username;
+        fullname = value.data[0].fullName;
+        profileimage = value.data[0].profilePicture;
+        totalCoins = value.data[0].totalCoins;
+      });
+
       return value;
     });
-
-    super.initState();
   }
 
   @override
@@ -157,6 +164,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       drawer: NavigationDrawer(widget.userid, username, fullname, profileimage),
       onDrawerChanged: (value) {
         setState(() {
+          fetchUserDetails();
+
           //Home services---------------
           home = HomeServices.getHome(widget.userid).then((value) {
             setState(() {
@@ -205,10 +214,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         MaterialPageRoute(
                             builder: (context) => Coins(widget.userid)))
                     .then((value) {
-                  setState(() {
-                    coinspagemodel =
-                        CoinPageServices.getCoinPage(widget.userid);
-                  });
+                  fetchUserDetails();
                 });
                 //Navigator.pushNamed(context, Coins.id);
               },
@@ -295,7 +301,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                             context,
                             MaterialPageRoute(
                                 builder: (context) =>
-                                    SearchPage(widget.userid)));
+                                    SearchPage(widget.userid, totalCoins)));
                       },
                     )),
               ],
@@ -413,7 +419,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                                       othersid:
                                                                           '${snapshot.data!.data![index].userId}',
                                                                       otherUser_FCMtoken:
-                                                                          '${snapshot.data!.data![index].fcmToken}')));
+                                                                          '${snapshot.data!.data![index].fcmToken}',
+                                                                      UserTotalCoin:
+                                                                          totalCoins)));
                                                           // Navigator.pushNamed(context,
                                                           //     OthersProfilePage.id,
                                                           //     arguments: {
@@ -438,11 +446,16 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                     Positioned(
                                                       top: 0,
                                                       left: 28,
-                                                      child: CircleAvatar(
-                                                        backgroundColor:
-                                                            Color(0xFF1FDEB3),
-                                                        radius: 4,
-                                                      ),
+                                                      child:
+                                                          ('${snapshot.data!.data![index].profileImage}' ==
+                                                                  'online')
+                                                              ? CircleAvatar(
+                                                                  backgroundColor:
+                                                                      Color(
+                                                                          0xFF1FDEB3),
+                                                                  radius: 4,
+                                                                )
+                                                              : Container(),
                                                     )
                                                   ],
                                                 ),

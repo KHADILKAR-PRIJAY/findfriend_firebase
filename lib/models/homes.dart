@@ -1,112 +1,81 @@
-/// status : true
-/// message : "success"
-/// data : [{"user_id":"122","full_name":"Miraj V","username":"tamaku","profile_image":"https://findfriend.notionprojects.tech/upload/profile/no_image.jpg","age":"25","city":"Jamnagar","gender":"Men","fcm_token":""},{"user_id":"126","full_name":"Deepika P","username":"deepu45","profile_image":"https://findfriend.notionprojects.tech/upload/profile/no_image.jpg","age":"42","city":"Jamnagar","gender":"Women","fcm_token":""},{"user_id":"132","full_name":"Rohit Sharma","username":"hitman45","profile_image":"https://findfriend.notionprojects.tech/upload/profile/no_image.jpg","age":"35","city":"Jamnagar","gender":"Men","fcm_token":""},{"user_id":"133","full_name":"M S Dhoni","username":"ms07","profile_image":"https://findfriend.notionprojects.tech/upload/profile/no_image.jpg","age":"30","city":"Jamnagar","gender":"Men","fcm_token":""},{"user_id":"135","full_name":"Anushka S","username":"anushka456","profile_image":"https://findfriend.notionprojects.tech/upload/profile/no_image.jpg","age":"29","city":"Jamnagar","gender":"Women","fcm_token":""}]
+// To parse this JSON data, do
+//
+//     final homes = homesFromJson(jsonString);
+
+import 'dart:convert';
+
+Homes homesFromJson(String str) => Homes.fromJson(json.decode(str));
+
+String homesToJson(Homes data) => json.encode(data.toJson());
 
 class Homes {
-  bool? _status;
-  String? _message;
-  List<Data>? _data;
+  Homes({
+    required this.status,
+    required this.message,
+    required this.data,
+  });
 
-  bool? get status => _status;
-  String? get message => _message;
-  List<Data>? get data => _data;
+  bool status;
+  String message;
+  List<Data> data;
 
-  Homes({bool? status, String? message, List<Data>? data}) {
-    _status = status;
-    _message = message;
-    _data = data;
-  }
+  factory Homes.fromJson(Map<String, dynamic> json) => Homes(
+        status: json["status"],
+        message: json["message"],
+        data: List<Data>.from(json["data"].map((x) => Data.fromJson(x))),
+      );
 
-  Homes.fromJson(dynamic json) {
-    _status = json['status'];
-    _message = json['message'];
-    if (json['data'] != null) {
-      _data = [];
-      json['data'].forEach((v) {
-        _data?.add(Data.fromJson(v));
-      });
-    }
-  }
-
-  Map<String, dynamic> toJson() {
-    var map = <String, dynamic>{};
-    map['status'] = _status;
-    map['message'] = _message;
-    if (_data != null) {
-      map['data'] = _data?.map((v) => v.toJson()).toList();
-    }
-    return map;
-  }
+  Map<String, dynamic> toJson() => {
+        "status": status,
+        "message": message,
+        "data": List<dynamic>.from(data.map((x) => x.toJson())),
+      };
 }
 
-/// user_id : "122"
-/// full_name : "Miraj V"
-/// username : "tamaku"
-/// profile_image : "https://findfriend.notionprojects.tech/upload/profile/no_image.jpg"
-/// age : "25"
-/// city : "Jamnagar"
-/// gender : "Men"
-/// fcm_token : ""
-
 class Data {
-  String? _userId;
-  String? _fullName;
-  String? _username;
-  String? _profileImage;
-  String? _age;
-  String? _city;
-  String? _gender;
-  String? _fcmToken;
+  Data({
+    required this.userId,
+    required this.fullName,
+    required this.username,
+    required this.profileImage,
+    required this.age,
+    required this.city,
+    required this.gender,
+    required this.fcmToken,
+    required this.status,
+  });
 
-  String? get userId => _userId;
-  String? get fullName => _fullName;
-  String? get username => _username;
-  String? get profileImage => _profileImage;
-  String? get age => _age;
-  String? get city => _city;
-  String? get gender => _gender;
-  String? get fcmToken => _fcmToken;
+  String userId;
+  String fullName;
+  String username;
+  String profileImage;
+  String age;
+  String city;
+  String gender;
+  String fcmToken;
+  String status;
 
-  Data(
-      {String? userId,
-      String? fullName,
-      String? username,
-      String? profileImage,
-      String? age,
-      String? city,
-      String? gender,
-      String? fcmToken}) {
-    _userId = userId;
-    _fullName = fullName;
-    _username = username;
-    _profileImage = profileImage;
-    _age = age;
-    _city = city;
-    _gender = gender;
-    _fcmToken = fcmToken;
-  }
+  factory Data.fromJson(Map<String, dynamic> json) => Data(
+        userId: json["user_id"],
+        fullName: json["full_name"],
+        username: json["username"],
+        profileImage: json["profile_image"],
+        age: json["age"],
+        city: json["city"],
+        gender: json["gender"],
+        fcmToken: json["fcm_token"],
+        status: json["status"],
+      );
 
-  Data.fromJson(dynamic json) {
-    _userId = json['user_id'];
-    _fullName = json['full_name'];
-    _username = json['username'];
-    _profileImage = json['profile_image'];
-    _age = json['age'];
-    _city = json['city'];
-    _gender = json['gender'];
-    _fcmToken = json['fcm_token'];
-  }
-
-  Map<String, dynamic> toJson() {
-    var map = <String, dynamic>{};
-    map['user_id'] = _userId;
-    map['full_name'] = _fullName;
-    map['username'] = _username;
-    map['profile_image'] = _profileImage;
-    map['age'] = _age;
-    map['city'] = _city;
-    map['gender'] = _gender;
-    map['fcm_token'] = _fcmToken;
-    return map;
-  }
+  Map<String, dynamic> toJson() => {
+        "user_id": userId,
+        "full_name": fullName,
+        "username": username,
+        "profile_image": profileImage,
+        "age": age,
+        "city": city,
+        "gender": gender,
+        "fcm_token": fcmToken,
+        "status": status,
+      };
 }

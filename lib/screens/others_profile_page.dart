@@ -3,6 +3,7 @@ import 'package:find_friend/firebase_notification_handler/notification_handler.d
 import 'package:find_friend/firebase_notification_handler/send_notofication.dart';
 import 'package:find_friend/models/getpost_model.dart';
 import 'package:find_friend/models/others_profile.dart';
+import 'package:find_friend/services/check_call_rates.dart';
 import 'package:find_friend/services/fetch_post.dart';
 import 'package:find_friend/services/fetch_profile.dart';
 import 'package:find_friend/services/generate_channel_name.dart';
@@ -27,11 +28,13 @@ class OthersProfilePage extends StatefulWidget {
   String userid;
   String othersid;
   String otherUser_FCMtoken;
+  String UserTotalCoin;
   OthersProfilePage(
       {required this.userid,
       required this.username,
       required this.othersid,
-      required this.otherUser_FCMtoken});
+      required this.otherUser_FCMtoken,
+      required this.UserTotalCoin});
 
   @override
   _OthersProfilePageState createState() => _OthersProfilePageState();
@@ -43,6 +46,19 @@ class _OthersProfilePageState extends State<OthersProfilePage> {
   late String check;
   late bool statusCheck;
   late String cn;
+  late String audioCallRate;
+  late String videoCallRate;
+
+  getCallRates() {
+    CallRateServices().getAudiorate().then((value) {
+      audioCallRate = value['data']['audio_call_rate'];
+      print('Audio call rates:   ' + audioCallRate);
+    });
+    CallRateServices().getVideorate().then((value) {
+      videoCallRate = value['data']['video_call_rate'];
+      print('Video call rates:   ' + videoCallRate);
+    });
+  }
 
   createChatRoomAndStartConversation(
       String otherId, String username, String profile) {
@@ -115,6 +131,7 @@ class _OthersProfilePageState extends State<OthersProfilePage> {
 
   @override
   void initState() {
+    getCallRates();
     pf = ProfileServices.getOthersProfileTwo(widget.username);
     getpostmodel = PostServices.getPost(widget.othersid);
     checkFollowButton(userid: widget.userid, followedid: widget.othersid);
@@ -401,10 +418,15 @@ class _OthersProfilePageState extends State<OthersProfilePage> {
                                     Column(
                                       children: [
                                         IconButton(
-                                            icon: Icon(Icons.video_call),
-                                            color: Colors.white,
-                                            onPressed: () {
-                                              ///////////////////////////////////////////
+                                          icon: Icon(Icons.video_call),
+                                          color: Colors.white,
+                                          onPressed: () {
+                                            ///////////////////////////////////////////
+                                            if (double.parse(
+                                                    widget.UserTotalCoin
+                                                        .toString()) >=
+                                                double.parse(
+                                                    videoCallRate.toString())) {
                                               generatechannel()
                                                   .GenerateChannel()
                                                   .then(
@@ -446,7 +468,20 @@ class _OthersProfilePageState extends State<OthersProfilePage> {
                                                   );
                                                 },
                                               );
-                                            }),
+                                            } else {
+                                              final snackbar = SnackBar(
+                                                  behavior:
+                                                      SnackBarBehavior.floating,
+                                                  duration: Duration(
+                                                      milliseconds: 1000),
+                                                  backgroundColor: Colors.red,
+                                                  content: Text(
+                                                      'Not enough Coins',
+                                                      textAlign:
+                                                          TextAlign.center));
+                                            }
+                                          },
+                                        ),
                                         Text('Video Call',
                                             style: TextStyle(
                                                 color: Colors.grey,
@@ -456,10 +491,15 @@ class _OthersProfilePageState extends State<OthersProfilePage> {
                                     Column(
                                       children: [
                                         IconButton(
-                                            icon: Icon(Icons.phone),
-                                            color: Colors.white,
-                                            onPressed: () {
-                                              ///////////////////////////////////////////
+                                          icon: Icon(Icons.phone),
+                                          color: Colors.white,
+                                          onPressed: () {
+                                            ///////////////////////////////////////////
+                                            if (double.parse(
+                                                    widget.UserTotalCoin
+                                                        .toString()) >=
+                                                double.parse(
+                                                    audioCallRate.toString())) {
                                               generatechannel()
                                                   .GenerateChannel()
                                                   .then(
@@ -502,7 +542,9 @@ class _OthersProfilePageState extends State<OthersProfilePage> {
                                                   );
                                                 },
                                               );
-                                            }),
+                                            }
+                                          },
+                                        ),
                                         Text('Call',
                                             style: TextStyle(
                                                 color: Colors.grey,

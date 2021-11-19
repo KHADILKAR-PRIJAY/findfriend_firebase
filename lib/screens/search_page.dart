@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 class SearchPage extends StatefulWidget {
   static String id = 'search_page';
   String userid;
-  SearchPage(this.userid);
+  String UserTotalCoin;
+  SearchPage(this.userid, this.UserTotalCoin);
   @override
   _SearchPageState createState() => _SearchPageState();
 }
@@ -101,7 +102,9 @@ class _SearchPageState extends State<SearchPage> {
                                             otherUser_FCMtoken:
                                                 '${snapshot.data!.data[index].fcmToken}',
                                             username:
-                                                '${snapshot.data!.data[index].username}')));
+                                                '${snapshot.data!.data[index].username}',
+                                            UserTotalCoin:
+                                                widget.UserTotalCoin)));
                               },
                               child: ListTile(
                                 leading: Stack(
@@ -117,13 +120,15 @@ class _SearchPageState extends State<SearchPage> {
                                     Positioned(
                                       top: 0,
                                       left: 28,
-                                      child: (index == 1 || index == 4)
-                                          ? CircleAvatar(
-                                              backgroundColor:
-                                                  Color(0xFF1FDEB3),
-                                              radius: 4,
-                                            )
-                                          : Container(),
+                                      child:
+                                          ('${snapshot.data!.data[index].profileImage}' ==
+                                                  'online')
+                                              ? CircleAvatar(
+                                                  backgroundColor:
+                                                      Color(0xFF1FDEB3),
+                                                  radius: 4,
+                                                )
+                                              : Container(),
                                     )
                                   ],
                                 ),

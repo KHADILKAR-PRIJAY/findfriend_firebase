@@ -23,7 +23,7 @@ class VideoCallPage extends StatefulWidget {
   final String callStatus;
   final String channelName;
   final String? caller_id;
-  final String? user_id;
+  final String user_id;
   final String CallerImage;
 
   const VideoCallPage(
@@ -100,7 +100,7 @@ class _VideoCallPageState extends State<VideoCallPage> {
         userJoined: (i, j) {
           setState(() {
             (widget.callStatus == 'o')
-                ? CheckBalanceServices().checkvideobalance()
+                ? CheckBalanceServices().checkvideobalance(widget.user_id)
                 : null;
             _stopWatchTimer.onExecute.add(StopWatchExecute.start);
             _stopWatchTimer.onChange;
@@ -109,7 +109,9 @@ class _VideoCallPageState extends State<VideoCallPage> {
                 print(
                     'hello after 5 secsssssssssssssssssssssssssssssssssss video');
                 (widget.callStatus == 'o')
-                    ? CheckBalanceServices().checkvideobalance().then((value) {
+                    ? CheckBalanceServices()
+                        .checkvideobalance(widget.user_id)
+                        .then((value) {
                         print(value['data']['status'].toString());
                         if (value['data']['status'].toString() == 'n') {
                           timer.cancel();

@@ -138,7 +138,7 @@ class _Conversation_PageState extends State<Conversation_Page> {
                                       //user_id: widget.user_id,
                                       channelName: cn,
                                       CallerImage: widget.profileimage,
-                                      user_id: '45',
+                                      user_id: ConstantChat.myId,
                                       callStatus: 'o',
                                       caller_id: widget.otherUserId,
                                     ))).then((value) {
@@ -169,7 +169,7 @@ class _Conversation_PageState extends State<Conversation_Page> {
                                       //user_id: widget.user_id,
                                       channelName: cn,
                                       CallerImage: widget.profileimage,
-                                      user_id: '45',
+                                      user_id: ConstantChat.myId,
                                       callStatus: 'o',
                                       caller_id: widget.otherUserId,
                                     ))).then((value) {

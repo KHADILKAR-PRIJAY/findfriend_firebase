@@ -82,7 +82,7 @@ class _MyAppState extends State<MyApp> {
         FilterPage.id: (context) => FilterPage(),
         //Verification.id: (context) => Verification(),
         // VIPMemberDetail.id: (context) => VIPMemberDetail(),
-        SearchResultProfile.id: (context) => SearchResultProfile(),
+        //SearchResultProfile.id: (context) => SearchResultProfile(),
       },
     );
   }

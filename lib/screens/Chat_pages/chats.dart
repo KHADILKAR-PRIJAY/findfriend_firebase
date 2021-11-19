@@ -181,6 +181,7 @@ class _ChatViewState extends State<ChatView> {
     databaseMethods.getChatRooms(ConstantChat.myId).then((value) {
       setState(() {
         chatRoomsStream = value;
+        print(chatRoomsStream);
       });
     });
     super.initState();
