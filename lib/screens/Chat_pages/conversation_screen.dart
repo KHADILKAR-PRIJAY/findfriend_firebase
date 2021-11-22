@@ -162,6 +162,8 @@ class _Conversation_PageState extends State<Conversation_Page> {
                         print(cn.toString() + '////////////');
                         sendnotification(cn, FCMtoken, '0', ConstantChat.myId,
                             widget.otherUserId, '');
+                        print('convooooooooooooooo screen:       ' +
+                            ConstantChat.myId);
                         Navigator.push(
                             context,
                             MaterialPageRoute(

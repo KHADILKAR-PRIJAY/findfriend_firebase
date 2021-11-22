@@ -6,6 +6,7 @@ import 'package:find_friend/models/others_profile.dart';
 import 'package:find_friend/services/check_call_rates.dart';
 import 'package:find_friend/services/fetch_post.dart';
 import 'package:find_friend/services/fetch_profile.dart';
+import 'package:find_friend/services/fetch_subscription.dart';
 import 'package:find_friend/services/generate_channel_name.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -48,6 +49,7 @@ class _OthersProfilePageState extends State<OthersProfilePage> {
   late String cn;
   late String audioCallRate;
   late String videoCallRate;
+  late String UserSubscriptionPlanStatus;
 
   getCallRates() {
     CallRateServices().getAudiorate().then((value) {
@@ -135,6 +137,9 @@ class _OthersProfilePageState extends State<OthersProfilePage> {
     pf = ProfileServices.getOthersProfileTwo(widget.username);
     getpostmodel = PostServices.getPost(widget.othersid);
     checkFollowButton(userid: widget.userid, followedid: widget.othersid);
+    SubscriptionPlanServices.getCurrentUserPlan(widget.userid).then((value) {
+      UserSubscriptionPlanStatus = value.message;
+    });
     super.initState();
   }
 
@@ -560,10 +565,26 @@ class _OthersProfilePageState extends State<OthersProfilePage> {
                                               color: Colors.white,
                                               size: 22),
                                           onPressed: () {
-                                            createChatRoomAndStartConversation(
-                                                '${snapshot.data!.data[0].userId}',
-                                                '${snapshot.data!.data[0].username}',
-                                                '${snapshot.data!.data[0].profilePicture}');
+                                            if (UserSubscriptionPlanStatus ==
+                                                'success') {
+                                              createChatRoomAndStartConversation(
+                                                  '${snapshot.data!.data[0].userId}',
+                                                  '${snapshot.data!.data[0].username}',
+                                                  '${snapshot.data!.data[0].profilePicture}');
+                                            } else {
+                                              final snackbar = SnackBar(
+                                                  behavior:
+                                                      SnackBarBehavior.floating,
+                                                  duration: Duration(
+                                                      milliseconds: 1000),
+                                                  backgroundColor: Colors.red,
+                                                  content: Text(
+                                                      'No plan activated',
+                                                      textAlign:
+                                                          TextAlign.center));
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(snackbar);
+                                            }
                                           },
                                         ),
                                         Padding(

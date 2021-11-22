@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:find_friend/screens/Chat_pages/conversation_screen.dart';
 import 'package:find_friend/screens/demo_screen/constant_chat.dart';
 import 'package:find_friend/screens/search_page.dart';
+import 'package:find_friend/services/fetch_subscription.dart';
 import 'package:find_friend/timeStamp.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -22,6 +23,17 @@ class Chats extends StatefulWidget {
 
 class _ChatsState extends State<Chats> {
   int selectedIndex = 1;
+  late String UserSubscriptionPlanStatus;
+  @override
+  void initState() {
+    SubscriptionPlanServices.getCurrentUserPlan(widget.userid).then((value) {
+      setState(() {
+        UserSubscriptionPlanStatus = value.message;
+      });
+    });
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -136,7 +148,11 @@ class _ChatsState extends State<Chats> {
               ),
             ),
             (selectedIndex == 1)
-                ? Expanded(child: ChatView())
+                ? (UserSubscriptionPlanStatus == 'success')
+                    ? Expanded(child: ChatView())
+                    : Container(
+                        height: 300,
+                        child: Center(child: Text('No Active Plans')))
                 : FriendsView(widget.userid)
           ],
         ),
@@ -216,6 +232,8 @@ class _ChatRoomTileState extends State<ChatRoomTile> {
     databasemethods.getUser(widget.userId).then((val) {
       setState(() {
         searchSnapshot = val;
+        // List convocation = val;
+        // print(convocation);
       });
     });
     super.initState();
@@ -223,6 +241,7 @@ class _ChatRoomTileState extends State<ChatRoomTile> {
 
   @override
   Widget build(BuildContext context) {
+    print(searchSnapshot);
     return GestureDetector(
       onTap: () {
         Navigator.push(

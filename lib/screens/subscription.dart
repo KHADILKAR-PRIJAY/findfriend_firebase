@@ -460,8 +460,8 @@ class _SubscriptionState extends State<Subscription> {
                                                 planThird = false;
                                               });
                                               getTxnToken(
-                                                  '${snapshot.data!.data[0].amount}',
-                                                  '${snapshot.data!.data[0].planId}');
+                                                  '${snapshot.data!.data[1].amount}',
+                                                  '${snapshot.data!.data[1].planId}');
                                             },
                                             child: Container(
                                               width: double.infinity,
@@ -605,8 +605,8 @@ class _SubscriptionState extends State<Subscription> {
                                         planThird = true;
                                       });
                                       getTxnToken(
-                                          '${snapshot.data!.data[0].amount}',
-                                          '${snapshot.data!.data[0].planId}');
+                                          '${snapshot.data!.data[2].amount}',
+                                          '${snapshot.data!.data[2].planId}');
                                     },
                                     child: Container(
                                       width: double.infinity,
