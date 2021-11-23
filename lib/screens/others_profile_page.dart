@@ -134,7 +134,7 @@ class _OthersProfilePageState extends State<OthersProfilePage> {
   @override
   void initState() {
     getCallRates();
-    pf = ProfileServices.getOthersProfileTwo(widget.username);
+    pf = ProfileServices.getOthersProfileTwo(widget.othersid);
     getpostmodel = PostServices.getPost(widget.othersid);
     checkFollowButton(userid: widget.userid, followedid: widget.othersid);
     SubscriptionPlanServices.getCurrentUserPlan(widget.userid).then((value) {
@@ -194,7 +194,8 @@ class _OthersProfilePageState extends State<OthersProfilePage> {
                                       children: [
                                         Padding(
                                           padding: const EdgeInsets.all(8.0),
-                                          child: Text('10'),
+                                          child: Text(
+                                              '${snapshot.data!.data[0].post}'),
                                         ),
                                         Text('Posts'),
                                       ],
@@ -205,7 +206,8 @@ class _OthersProfilePageState extends State<OthersProfilePage> {
                                         children: [
                                           Padding(
                                             padding: const EdgeInsets.all(8.0),
-                                            child: Text('61'),
+                                            child: Text(
+                                                '${snapshot.data!.data[0].followers}'),
                                           ),
                                           Text('Followers'),
                                         ],
@@ -217,7 +219,8 @@ class _OthersProfilePageState extends State<OthersProfilePage> {
                                         children: [
                                           Padding(
                                             padding: const EdgeInsets.all(8.0),
-                                            child: Text('56'),
+                                            child: Text(
+                                                '${snapshot.data!.data[0].following}'),
                                           ),
                                           Text('Following'),
                                         ],
@@ -267,7 +270,7 @@ class _OthersProfilePageState extends State<OthersProfilePage> {
                                                     setState(() {
                                                       pf = ProfileServices
                                                           .getOthersProfileTwo(
-                                                              widget.username);
+                                                              widget.othersid);
                                                     });
                                                   });
 
@@ -349,7 +352,7 @@ class _OthersProfilePageState extends State<OthersProfilePage> {
                                                 setState(() {
                                                   pf = ProfileServices
                                                       .getOthersProfileTwo(
-                                                          widget.username);
+                                                          widget.othersid);
                                                 });
                                               });
 

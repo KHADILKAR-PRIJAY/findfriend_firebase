@@ -34,9 +34,9 @@ class ProfileServices {
   //   }
   // }
 
-  static Future<OthersProfile> getOthersProfileTwo(String username) async {
-    var response = await http.post(Uri.parse(urll),
-        body: {'username': username, 'token': '123456789'});
+  static Future<OthersProfile> getOthersProfileTwo(String userId) async {
+    var response = await http
+        .post(Uri.parse(urll), body: {'user_id': userId, 'token': '123456789'});
     print(response.body);
     if (response.statusCode == 200) {
       return OthersProfile.fromJson(jsonDecode(response.body));

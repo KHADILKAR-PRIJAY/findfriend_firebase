@@ -1,8 +1,9 @@
 import 'dart:convert';
+import 'package:find_friend/screens/demo_screen/constant_chat.dart';
 import 'package:http/http.dart' as http;
 
 class CallRateServices {
-  Map body = {'token': '123456789'};
+  Map body = {'token': '123456789', 'user_id': ConstantChat.myId};
   Future getAudiorate() async {
     var response = await http.post(
         Uri.parse(

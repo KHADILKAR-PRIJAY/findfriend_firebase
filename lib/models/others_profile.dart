@@ -36,6 +36,9 @@ class OthersProfile {
 class Datum {
   Datum({
     required this.userId,
+    required this.post,
+    required this.following,
+    required this.followers,
     required this.fullName,
     required this.username,
     required this.bio,
@@ -57,6 +60,9 @@ class Datum {
   });
 
   String userId;
+  String post;
+  String following;
+  String followers;
   String fullName;
   String username;
   String bio;
@@ -78,6 +84,9 @@ class Datum {
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
         userId: json["user_id"],
+        post: json["post"],
+        following: json["following"],
+        followers: json["followers"],
         fullName: json["full_name"],
         username: json["username"],
         bio: json["bio"],
@@ -100,6 +109,9 @@ class Datum {
 
   Map<String, dynamic> toJson() => {
         "user_id": userId,
+        "post": post,
+        "following": following,
+        "followers": followers,
         "full_name": fullName,
         "username": username,
         "bio": bio,
