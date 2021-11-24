@@ -114,7 +114,9 @@ class _VideoCallPageState extends State<VideoCallPage> {
                         .then((value) {
                         print(value['data']['status'].toString());
                         if (value['data']['status'].toString() == 'n') {
-                          timer.cancel();
+                          // changes ---------------------------------------------------------------------------------------------------
+                          _timer.cancel();
+
                           _stopWatchTimer.onExecute.add(StopWatchExecute.stop);
                           client.sessionController.endCall();
                           client.sessionController.dispose();

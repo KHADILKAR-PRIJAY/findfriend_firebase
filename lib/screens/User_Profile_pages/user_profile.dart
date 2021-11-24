@@ -12,6 +12,7 @@ import 'package:find_friend/services/fetch_profile.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class UserProfile extends StatefulWidget {
   final String userid;
@@ -199,6 +200,10 @@ class _UserProfileState extends State<UserProfile> {
       });
     });
     return Future.value(profile);
+  }
+
+  void _launchURL(String _url) async {
+    if (!await launch(_url)) throw 'Could not launch $_url';
   }
 
   @override
@@ -455,73 +460,99 @@ class _UserProfileState extends State<UserProfile> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              CircleAvatar(
-                                radius: 30,
-                                backgroundColor: Color(0xff6A6A6C),
+                              GestureDetector(
+                                onTap: () {
+                                  _launchURL(
+                                      '${snapshot.data!.data[0].instaLink}');
+                                },
                                 child: CircleAvatar(
-                                  backgroundColor: Colors.black,
-                                  radius: 28,
+                                  radius: 30,
+                                  backgroundColor: Color(0xff6A6A6C),
                                   child: CircleAvatar(
-                                      backgroundColor: Colors.black,
-                                      radius: 27,
-                                      child: Container(
-                                        height: 70,
-                                        width: 70,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(30),
-                                          gradient: LinearGradient(
-                                              colors: [
-                                                Color(0xff8a3ab9),
-                                                Color(0xffcd486b),
-                                                Color(0xffe95950),
-                                                Color(0xfffbad50),
-                                              ],
-                                              begin: Alignment.topRight,
-                                              end: Alignment.bottomLeft),
-                                        ),
-                                        child: Icon(FontAwesomeIcons.instagram,
-                                            color: Colors.white, size: 30),
-                                      )),
+                                    backgroundColor: Colors.black,
+                                    radius: 28,
+                                    child: CircleAvatar(
+                                        backgroundColor: Colors.black,
+                                        radius: 27,
+                                        child: Container(
+                                          height: 70,
+                                          width: 70,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(30),
+                                            gradient: LinearGradient(
+                                                colors: [
+                                                  Color(0xff8a3ab9),
+                                                  Color(0xffcd486b),
+                                                  Color(0xffe95950),
+                                                  Color(0xfffbad50),
+                                                ],
+                                                begin: Alignment.topRight,
+                                                end: Alignment.bottomLeft),
+                                          ),
+                                          child: Icon(
+                                              FontAwesomeIcons.instagram,
+                                              color: Colors.white,
+                                              size: 30),
+                                        )),
+                                  ),
                                 ),
                               ),
-                              CircleAvatar(
-                                radius: 30,
-                                backgroundColor: Color(0xff6A6A6C),
+                              GestureDetector(
+                                onTap: () {
+                                  _launchURL(
+                                      '${snapshot.data!.data[0].twitterLink}');
+                                },
                                 child: CircleAvatar(
-                                  radius: 28,
-                                  backgroundColor: Colors.black,
+                                  radius: 30,
+                                  backgroundColor: Color(0xff6A6A6C),
                                   child: CircleAvatar(
-                                      backgroundColor: Color(0xff1DA1F2),
-                                      radius: 27,
-                                      child: Icon(FontAwesomeIcons.twitter,
-                                          color: Colors.white)),
+                                    radius: 28,
+                                    backgroundColor: Colors.black,
+                                    child: CircleAvatar(
+                                        backgroundColor: Color(0xff1DA1F2),
+                                        radius: 27,
+                                        child: Icon(FontAwesomeIcons.twitter,
+                                            color: Colors.white)),
+                                  ),
                                 ),
                               ),
-                              CircleAvatar(
-                                radius: 30,
-                                backgroundColor: Color(0xff6A6A6C),
+                              GestureDetector(
+                                onTap: () {
+                                  _launchURL(
+                                      '${snapshot.data!.data[0].youtubeLink}');
+                                },
                                 child: CircleAvatar(
-                                  radius: 28,
-                                  backgroundColor: Colors.black,
+                                  radius: 30,
+                                  backgroundColor: Color(0xff6A6A6C),
                                   child: CircleAvatar(
-                                      backgroundColor: Colors.red,
-                                      radius: 27,
-                                      child: Icon(FontAwesomeIcons.youtube,
-                                          color: Colors.white)),
+                                    radius: 28,
+                                    backgroundColor: Colors.black,
+                                    child: CircleAvatar(
+                                        backgroundColor: Colors.red,
+                                        radius: 27,
+                                        child: Icon(FontAwesomeIcons.youtube,
+                                            color: Colors.white)),
+                                  ),
                                 ),
                               ),
-                              CircleAvatar(
-                                radius: 30,
-                                backgroundColor: Color(0xff6A6A6C),
+                              GestureDetector(
+                                onTap: () {
+                                  _launchURL(
+                                      '${snapshot.data!.data[0].fbLink}');
+                                },
                                 child: CircleAvatar(
-                                  radius: 28,
-                                  backgroundColor: Colors.black,
+                                  radius: 30,
+                                  backgroundColor: Color(0xff6A6A6C),
                                   child: CircleAvatar(
-                                    radius: 27,
-                                    child: IconButton(
-                                      icon: Icon(FontAwesomeIcons.facebookF),
-                                      onPressed: () {},
+                                    radius: 28,
+                                    backgroundColor: Colors.black,
+                                    child: CircleAvatar(
+                                      radius: 27,
+                                      child: IconButton(
+                                        icon: Icon(FontAwesomeIcons.facebookF),
+                                        onPressed: () {},
+                                      ),
                                     ),
                                   ),
                                 ),

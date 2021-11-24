@@ -58,8 +58,8 @@ class _MyAppState extends State<MyApp> {
       ),
 
       debugShowCheckedModeBanner: false,
-      //home: Demop(),
-      initialRoute: SplashScreen.id,
+      home: Demop(),
+      //initialRoute: SplashScreen.id,
       routes: {
         SignUp.id: (context) => SignUp(),
         GenerateOtp.id: (context) => GenerateOtp(),
