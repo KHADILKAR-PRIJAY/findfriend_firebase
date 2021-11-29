@@ -314,7 +314,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                     future: (check) ? home : vip,
                     builder: (context, snapshot) {
                       return ListView.builder(
-                        physics: PageScrollPhysics(),
+                        physics: RangeMaintainingScrollPhysics(),
                         shrinkWrap: true,
                         itemCount: snapshot.data!.data!.length,
                         scrollDirection: Axis.vertical,
@@ -397,42 +397,35 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                           ),
 
                                           ////////////
-                                          Padding(
-                                            padding: const EdgeInsets.all(12.0),
-                                            child: Row(
-                                              children: [
-                                                Stack(
-                                                  children: [
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        setState(() {
-                                                          print(
-                                                              '${snapshot.data!.data![index].username}');
-                                                          Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                  builder: (context) => OthersProfilePage(
-                                                                      username:
-                                                                          '${snapshot.data!.data![index].username}',
-                                                                      userid: widget
-                                                                          .userid,
-                                                                      othersid:
-                                                                          '${snapshot.data!.data![index].userId}',
-                                                                      otherUser_FCMtoken:
-                                                                          '${snapshot.data!.data![index].fcmToken}',
-                                                                      UserTotalCoin:
-                                                                          totalCoins)));
-                                                          // Navigator.pushNamed(context,
-                                                          //     OthersProfilePage.id,
-                                                          //     arguments: {
-                                                          //       'keyvalue': snapshot
-                                                          //           .data!
-                                                          //           .data![index]
-                                                          //           .username
-                                                          //     });
-                                                        });
-                                                      },
-                                                      child: CircleAvatar(
+                                          GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                print(
+                                                    '${snapshot.data!.data![index].username}');
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) => OthersProfilePage(
+                                                            username:
+                                                                '${snapshot.data!.data![index].username}',
+                                                            userid:
+                                                                widget.userid,
+                                                            othersid:
+                                                                '${snapshot.data!.data![index].userId}',
+                                                            otherUser_FCMtoken:
+                                                                '${snapshot.data!.data![index].fcmToken}',
+                                                            UserTotalCoin:
+                                                                totalCoins)));
+                                              });
+                                            },
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(12.0),
+                                              child: Row(
+                                                children: [
+                                                  Stack(
+                                                    children: [
+                                                      CircleAvatar(
                                                         backgroundColor:
                                                             Color(0xFF6A6A6C),
                                                         radius: 23,
@@ -442,51 +435,52 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                                 NetworkImage(
                                                                     '${snapshot.data!.data![index].profileImage}')),
                                                       ),
-                                                    ),
-                                                    Positioned(
-                                                      top: 0,
-                                                      left: 28,
-                                                      child:
-                                                          ('${snapshot.data!.data![index].profileImage}' ==
-                                                                  'online')
-                                                              ? CircleAvatar(
-                                                                  backgroundColor:
-                                                                      Color(
-                                                                          0xFF1FDEB3),
-                                                                  radius: 4,
-                                                                )
-                                                              : Container(),
-                                                    )
-                                                  ],
-                                                ),
-                                                SizedBox(width: 12),
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Row(
-                                                      children: [
-                                                        Text(
-                                                            '${snapshot.data!.data![index].username} '),
-                                                        Icon(
-                                                          FontAwesomeIcons
-                                                              .solidCheckCircle,
-                                                          color:
-                                                              Color(0xff2596BE),
-                                                          size: 14,
-                                                        )
-                                                      ],
-                                                    ),
-                                                    SizedBox(height: 2),
-                                                    Text(
-                                                      '@ ${snapshot.data!.data![index].fullName}',
-                                                      style: TextStyle(
-                                                          color: Colors.grey,
-                                                          fontSize: 12),
-                                                    )
-                                                  ],
-                                                ),
-                                              ],
+                                                      Positioned(
+                                                        top: 0,
+                                                        left: 28,
+                                                        child:
+                                                            ('${snapshot.data!.data![index].profileImage}' ==
+                                                                    'online')
+                                                                ? CircleAvatar(
+                                                                    backgroundColor:
+                                                                        Color(
+                                                                            0xFF1FDEB3),
+                                                                    radius: 4,
+                                                                  )
+                                                                : Container(),
+                                                      )
+                                                    ],
+                                                  ),
+                                                  SizedBox(width: 12),
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          Text(
+                                                              '${snapshot.data!.data![index].username} '),
+                                                          Icon(
+                                                            FontAwesomeIcons
+                                                                .solidCheckCircle,
+                                                            color: Color(
+                                                                0xff2596BE),
+                                                            size: 14,
+                                                          )
+                                                        ],
+                                                      ),
+                                                      SizedBox(height: 2),
+                                                      Text(
+                                                        '@ ${snapshot.data!.data![index].fullName}',
+                                                        style: TextStyle(
+                                                            color: Colors.grey,
+                                                            fontSize: 12),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ],
